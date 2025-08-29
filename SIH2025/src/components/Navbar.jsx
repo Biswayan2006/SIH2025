@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
-
+//Arpan Atha
 function LanguageSelector() {
   const [lang, setLang] = useState('en')
   const [isOpen, setIsOpen] = useState(false)
