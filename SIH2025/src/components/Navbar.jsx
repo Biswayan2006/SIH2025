@@ -113,7 +113,7 @@ export default function Navbar() {
             
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-2">
-              <NavLink to="/" end className={linkClass}>🏠 Home</NavLink>
+              <NavLink to="/" end className={linkClass}>🏠 Home a</NavLink>
               <NavLink to="/live" className={linkClass}>
                 <span className="flex items-center gap-2">
                   🎯 Live Tracking
