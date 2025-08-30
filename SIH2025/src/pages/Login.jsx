@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from '../context/LanguageContext';
 // Added transportation-themed animation library
 
 export default function Login() {
+  const { translate } = useLanguage();
+  
   // CSS for animations
   useEffect(() => {
     const style = document.createElement('style');
@@ -210,15 +213,15 @@ export default function Login() {
             <div className="w-16 h-16 bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <span className="text-white text-2xl">🚌</span>
             </div>
-            <h1 className="text-2xl font-bold text-white">Transit Connect</h1>
-            <p className="text-[#4cc9f0] mt-2">Login to track your journey</p>
+            <h1 className="text-2xl font-bold text-white">{translate('welcomeBack')}</h1>
+            <p className="text-[#4cc9f0] mt-2">{translate('loginToDashboard')}</p>
           </motion.div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div variants={itemVariants}>
               <label className="block text-sm font-medium text-[#4cc9f0] mb-2">
-                Email Address
+                {translate('emailAddress')}
               </label>
               <input
                 type="email"
@@ -233,7 +236,7 @@ export default function Login() {
 
             <motion.div variants={itemVariants}>
               <label className="block text-sm font-medium text-[#4cc9f0] mb-2">
-                Password
+                {translate('password')}
               </label>
               <input
                 type="password"
