@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
-//Arpan Atha
+
+// ✅ Language Selector
 function LanguageSelector() {
-  const [lang, setLang] = useState('en')
+  const [lang, setLang] = useState(localStorage.getItem('lang') || 'en')
   const [isOpen, setIsOpen] = useState(false)
-  
+
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
@@ -13,15 +14,20 @@ function LanguageSelector() {
     { code: 'ta', name: 'தமிழ்', flag: '🇮🇳' },
     { code: 'te', name: 'తెలుగు', flag: '🇮🇳' }
   ]
-  
+
   const currentLang = languages.find(l => l.code === lang)
-  
+
+  const handleSelect = (code) => {
+    setLang(code)
+    localStorage.setItem('lang', code)
+    setIsOpen(false)
+  }
+
   return (
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 bg-transparent border rounded-lg px-3 py-2 text-sm hover:bg-gray-50 transition-colors"
-        aria-label="Language selector"
+        className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-gray-800 dark:text-white hover:text-cyan-500 transition"
       >
         <span>{currentLang?.flag}</span>
         <span className="hidden sm:inline">{currentLang?.name}</span>
@@ -29,17 +35,14 @@ function LanguageSelector() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-      
+
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
-          {languages.map((language) => (
+        <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-[#1a1a2e] border border-cyan-400 rounded-xl shadow-lg z-50 overflow-hidden">
+          {languages.map(language => (
             <button
               key={language.code}
-              onClick={() => {
-                setLang(language.code)
-                setIsOpen(false)
-              }}
-              className="w-full text-left px-4 py-2 hover:bg-gray-50 flex items-center gap-3 first:rounded-t-lg last:rounded-b-lg"
+              onClick={() => handleSelect(language.code)}
+              className="w-full px-4 py-2 text-left flex items-center gap-3 text-gray-800 dark:text-white hover:text-cyan-500 transition"
             >
               <span>{language.flag}</span>
               <span>{language.name}</span>
@@ -51,149 +54,93 @@ function LanguageSelector() {
   )
 }
 
+// ✅ Nav items
+const navItems = [
+  { to: '/', label: 'Home' },
+  { to: '/live', label: 'Live Tracking' },
+  { to: '/routes', label: 'Routes' },
+  { to: '/green', label: 'Sustainability' },
+  { to: '/profile', label: 'Profile' },
+  { to: '/feedback', label: 'Feedback' },
+  { to: '/accessibility', label: 'Settings' }
+]
+
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
-  
+
   useEffect(() => {
     setOpen(false)
   }, [location])
 
-  const linkClass = ({ isActive }) => {
-    const baseClass = "nav-link relative px-6 py-3 font-semibold text-sm transition-all duration-300"
-    const activeClass = "text-emerald-600 border-b-2 border-emerald-500"
-    const inactiveClass = "text-gray-700 hover:text-emerald-600"
-    
-    // Special highlight for Live Tracking as hero feature
-    if (isActive && location.pathname === '/live') {
-      return `${baseClass} text-emerald-600 border-b-2 border-emerald-500 font-bold`
-    }
-    
-    return `${baseClass} ${isActive ? activeClass : inactiveClass}`
-  }
+  const linkClass = ({ isActive }) =>
+    `relative font-medium px-2 py-1 text-gray-800 dark:text-white transition
+     after:content-[''] after:absolute after:w-0 after:h-[2px] after:left-0 after:-bottom-1 
+     after:bg-cyan-500 after:transition-all after:duration-300
+     hover:after:w-full hover:text-cyan-500
+     ${isActive ? 'text-cyan-500 after:w-full' : ''}`
 
   const mobileClass = ({ isActive }) =>
-    `block px-6 py-4 text-base font-medium transition-all duration-300 rounded-2xl mx-2 my-1 ${isActive 
-      ? 'text-emerald-600 border-l-4 border-emerald-500 pl-5' 
-      : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'}`
+    `block text-lg py-2 text-center transition-colors
+     ${isActive ? 'text-cyan-500' : 'text-gray-800 dark:text-white hover:text-cyan-500'}`
 
   return (
     <>
-      {/* Glassmorphic Navbar */}
-      <header className="fixed top-0 w-full z-50 glass border-b border-white/20 shadow-glass">
-        <div className="container-modern">
-          <div className="h-20 flex items-center justify-between">
-            {/* Logo Section */}
-            <div className="flex items-center gap-3">
-              <button
-                className="lg:hidden p-3 rounded-full hover:bg-white/20 transition-all duration-300"
-                aria-label="Open menu"
-                onClick={() => setOpen(!open)}
-              >
-                {/* Animated Hamburger */}
-                <div className="w-6 h-6 relative">
-                  <span className={`absolute block w-full h-0.5 bg-gray-700 transform transition-all duration-300 ${open ? 'rotate-45 top-3' : 'top-1'}`}></span>
-                  <span className={`absolute block w-full h-0.5 bg-gray-700 transform transition-all duration-300 top-3 ${open ? 'opacity-0' : 'opacity-100'}`}></span>
-                  <span className={`absolute block w-full h-0.5 bg-gray-700 transform transition-all duration-300 ${open ? '-rotate-45 top-3' : 'top-5'}`}></span>
-                </div>
-              </button>
-              
-              <Link to="/" className="flex items-center gap-3 group transition-transform duration-300 hover:scale-105">
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                  </svg>
-                </div>
-                <div className="hidden sm:block">
-                  <h1 className="text-2xl font-bold text-gradient">TransitTrack</h1>
-                  <p className="text-xs text-gray-600 font-medium">Smarter Commutes, Greener Cities</p>
-                </div>
-              </Link>
-            </div>
-            
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-2">
-              <NavLink to="/" end className={linkClass}>🏠 Home a</NavLink>
-              <NavLink to="/live" className={linkClass}>
-                <span className="flex items-center gap-2">
-                  🎯 Live Tracking
-                </span>
-              </NavLink>
-              <NavLink to="/routes" className={linkClass}>🗺️ Routes</NavLink>
-              <NavLink to="/green" className={linkClass}>
-                <span className="flex items-center gap-2">
-                  🌱 Sustainability
-                </span>
-              </NavLink>
-              <NavLink to="/profile" className={linkClass}>👤 Profile</NavLink>
-              <NavLink to="/feedback" className={linkClass}>💬 Feedback</NavLink>
-              <NavLink to="/accessibility" className={linkClass}>♿ Settings</NavLink>
-            </nav>
-            
-            {/* Right Section */}
-            <div className="flex items-center gap-4">
-              <ThemeToggle />
-              <LanguageSelector />
-              <NavLink 
-                to="/login" 
-                className="btn-primary text-sm hidden sm:inline-flex items-center gap-2"
-              >
-                👤 Login
-              </NavLink>
-            </div>
-          </div>
-        </div>
-      </header>
-      
-      {/* Mobile Slide-out Menu */}
-      <div className={`fixed inset-0 z-40 lg:hidden transition-all duration-300 ${open ? 'visible opacity-100' : 'invisible opacity-0'}`}>
-        {/* Backdrop */}
-        <div 
-          className={`absolute inset-0 bg-black/20 backdrop-blur-sm transition-all duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
-          onClick={() => setOpen(false)}
-        ></div>
+      {/* Top Navbar */}
+      <nav className="fixed top-0 w-full bg-[#F8F9FA]/70 dark:bg-[#1a1a2e]/90 backdrop-blur-md shadow-lg flex justify-between items-center px-6 py-3 z-50 transition">
         
-        {/* Slide Menu */}
-        <div className={`absolute left-0 top-0 h-full w-80 max-w-[80vw] glass-dark transform transition-all duration-300 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
-          <div className="p-6 space-y-4">
-            {/* Mobile Logo */}
-            <div className="flex items-center gap-3 pb-6 border-b border-white/10">
-              <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-white">TransitTrack</h2>
-                <p className="text-xs text-gray-300">Smarter Commutes</p>
-              </div>
-            </div>
-            
-            {/* Mobile Navigation Links */}
-            <nav className="space-y-2">
-              <NavLink to="/" end className={mobileClass}>🏠 Home</NavLink>
-              <NavLink to="/live" className={mobileClass}>🎯 Live Tracking</NavLink>
-              <NavLink to="/routes" className={mobileClass}>🗺️ Routes</NavLink>
-              <NavLink to="/green" className={mobileClass}>🌱 Sustainability</NavLink>
-              <NavLink to="/profile" className={mobileClass}>👤 Profile</NavLink>
-              <NavLink to="/feedback" className={mobileClass}>💬 Feedback</NavLink>
-              <NavLink to="/accessibility" className={mobileClass}>♿ Settings</NavLink>
-            </nav>
-            
-            {/* Mobile Theme Toggle and Login */}
-            <div className="pt-6 border-t border-white/10 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-white text-sm">Theme Mode</span>
-                <ThemeToggle />
-              </div>
-              <NavLink to="/login" className="btn-primary w-full justify-center text-sm">👤 Login</NavLink>
-            </div>
-          </div>
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2">
+          <img
+            src="/src/assets/image.png"
+            alt="logo"
+            className="h-12 w-12 rounded-full border-2 border-cyan-500 shadow-md"
+          />
+          <span className="hidden sm:block font-bold text-xl text-gray-900 dark:text-white">TransitTrack</span>
+        </Link>
+
+        {/* Desktop Nav */}
+        <div className="hidden md:flex gap-6 items-center">
+          {navItems.map(item => (
+            <NavLink key={item.to} to={item.to} end={item.to === '/'} className={linkClass}>
+              {item.label}
+            </NavLink>
+          ))}
+        </div>
+
+        {/* Right Side */}
+        <div className="flex items-center gap-4">
+          <LanguageSelector />
+          <ThemeToggle />
+          <NavLink to="/login" className="hidden sm:inline-block bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition">
+            👤 Login
+          </NavLink>
+        </div>
+
+        {/* Hamburger */}
+        <div
+          className={`md:hidden flex flex-col justify-between w-8 h-6 cursor-pointer ${open ? 'open' : ''}`}
+          onClick={() => setOpen(!open)}
+        >
+          <span className={`h-1 w-full bg-gray-800 dark:bg-white rounded transition ${open ? 'rotate-45 translate-y-2 bg-cyan-500' : ''}`} />
+          <span className={`h-1 w-full bg-gray-800 dark:bg-white rounded transition ${open ? 'opacity-0' : ''}`} />
+          <span className={`h-1 w-full bg-gray-800 dark:bg-white rounded transition ${open ? '-rotate-45 -translate-y-2 bg-cyan-500' : ''}`} />
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      <div className={`fixed top-0 right-0 h-full w-64 bg-white dark:bg-[#1a1a2e] backdrop-blur-xl shadow-xl transform transition-transform duration-300 ease-in-out z-40 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="flex flex-col items-center gap-6 mt-24">
+          {navItems.map(item => (
+            <NavLink key={item.to} to={item.to} end={item.to === '/'} className={mobileClass}>
+              {item.label}
+            </NavLink>
+          ))}
+          <NavLink to="/login" className="bg-[#1B9AAA] hover:bg-cyan-600 text-white px-6 py-2 rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition">
+            👤 Login
+          </NavLink>
         </div>
       </div>
-      
-      {/* Spacer for fixed navbar */}
-      <div className="h-20"></div>
     </>
   )
 }
