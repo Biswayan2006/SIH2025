@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useLanguage } from '../context/LanguageContext'
 
 const sampleUser = {
   name: 'Alex Johnson',
@@ -76,6 +77,7 @@ const sampleFavorites = [
 ]
 
 export default function Profile() {
+  const { translate } = useLanguage();
   const [activeTab, setActiveTab] = useState('rides')
   const [settings, setSettings] = useState({
     notifications: true,
@@ -96,9 +98,9 @@ export default function Profile() {
   }
 
   const tabs = [
-    { id: 'rides', label: 'My Rides', icon: '🚌', count: sampleRides.length },
-    { id: 'favorites', label: 'Favorites', icon: '⭐', count: sampleFavorites.length },
-    { id: 'settings', label: 'Settings', icon: '⚙️', count: null }
+    { id: 'rides', label: translate('myRides'), icon: '🚌', count: sampleRides.length },
+    { id: 'favorites', label: translate('favorites'), icon: '⭐', count: sampleFavorites.length },
+    { id: 'settings', label: translate('settings'), icon: '⚙️', count: null },
   ]
 
   return (
@@ -133,19 +135,19 @@ export default function Profile() {
             <div className="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-emerald-50 rounded-2xl p-4 text-center">
                 <div className="text-2xl font-bold text-emerald-600">{userInfo.stats.totalTrips}</div>
-                <div className="text-sm text-gray-600">Total Trips</div>
+                <div className="text-sm text-gray-600">{translate('totalTrips')}</div>
               </div>
               <div className="bg-blue-50 rounded-2xl p-4 text-center">
                 <div className="text-2xl font-bold text-blue-600">{userInfo.stats.totalDistance}</div>
-                <div className="text-sm text-gray-600">km Traveled</div>
+                <div className="text-sm text-gray-600">{translate('totalDistance')}</div>
               </div>
               <div className="bg-green-50 rounded-2xl p-4 text-center">
                 <div className="text-2xl font-bold text-green-600">{userInfo.stats.co2Saved}</div>
-                <div className="text-sm text-gray-600">kg CO₂ Saved</div>
+                <div className="text-sm text-gray-600">{translate('co2Saved')}</div>
               </div>
               <div className="bg-purple-50 rounded-2xl p-4 text-center">
                 <div className="text-2xl font-bold text-purple-600">₹{userInfo.stats.moneySaved}</div>
-                <div className="text-sm text-gray-600">Money Saved</div>
+                <div className="text-sm text-gray-600">{translate('moneySaved')}</div>
               </div>
             </div>
           </div>
@@ -211,7 +213,7 @@ export default function Profile() {
             <div className="space-y-6">
               <div className="card-modern p-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
-                  🚌 Recent Rides
+                  🚌 {translate('myRides')}
                 </h2>
                 <div className="space-y-4">
                   {sampleRides.map((ride, index) => (
@@ -237,7 +239,7 @@ export default function Profile() {
                   ))}
                 </div>
                 <button className="btn-secondary w-full mt-6">
-                  View All Rides
+                  {translate('myRides')}
                 </button>
               </div>
             </div>
@@ -248,7 +250,7 @@ export default function Profile() {
             <div className="space-y-6">
               <div className="card-modern p-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
-                  ⭐ Saved Routes & Stops
+                  ⭐ {translate('favorites')}
                 </h2>
                 <div className="grid md:grid-cols-2 gap-6">
                   {sampleFavorites.map((item, index) => (
@@ -298,17 +300,17 @@ export default function Profile() {
             <div className="space-y-6">
               <div className="card-modern p-6">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
-                  ⚙️ App Settings
+                  ⚙️ {translate('settings')}
                 </h2>
                 <div className="space-y-6">
                   {/* Notification Settings */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">🔔 Notifications</h3>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">🔔 {translate('notifications')}</h3>
                     <div className="space-y-4">
                       {[
-                        { key: 'notifications', label: 'Enable Notifications', desc: 'Receive app notifications' },
-                        { key: 'pushAlerts', label: 'Push Alerts', desc: 'Bus arrival and delay alerts' },
-                        { key: 'emailUpdates', label: 'Email Updates', desc: 'Weekly summary and news' }
+                        { key: 'notifications', label: translate('notifications'), desc: 'Receive app notifications' },
+                        { key: 'pushAlerts', label: translate('pushAlerts'), desc: 'Bus arrival and delay alerts' },
+                        { key: 'emailUpdates', label: translate('emailUpdates'), desc: 'Weekly summary and news' }
                       ].map((setting) => (
                         <div key={setting.key} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
                           <div>
@@ -334,12 +336,12 @@ export default function Profile() {
 
                   {/* App Preferences */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">🎨 Preferences</h3>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">🎨 {translate('settings')}</h3>
                     <div className="space-y-4">
                       {[
-                        { key: 'darkMode', label: 'Dark Mode', desc: 'Switch to dark theme' },
-                        { key: 'dataSaver', label: 'Data Saver', desc: 'Reduce data usage' },
-                        { key: 'locationTracking', label: 'Location Tracking', desc: 'Enable location services' }
+                        { key: 'darkMode', label: translate('darkMode'), desc: 'Switch to dark theme' },
+                        { key: 'dataSaver', label: translate('dataSaver'), desc: 'Reduce data usage' },
+                        { key: 'locationTracking', label: translate('locationTracking'), desc: 'Enable location services' }
                       ].map((setting) => (
                         <div key={setting.key} className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
                           <div>
@@ -365,19 +367,19 @@ export default function Profile() {
 
                   {/* Account Actions */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">👤 Account</h3>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">👤 {translate('editProfile')}</h3>
                     <div className="space-y-3">
                       <button className="w-full p-4 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-2xl font-medium transition-all duration-300 text-left">
-                        📝 Edit Profile Information
+                        📝 {translate('editProfile')}
                       </button>
                       <button className="w-full p-4 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-2xl font-medium transition-all duration-300 text-left">
-                        🔒 Change Password
+                        🔒 {translate('cancel')}
                       </button>
                       <button className="w-full p-4 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 rounded-2xl font-medium transition-all duration-300 text-left">
-                        📱 Export Data
+                        📱 {translate('dataSaver')}
                       </button>
                       <button className="w-full p-4 bg-red-50 hover:bg-red-100 text-red-700 rounded-2xl font-medium transition-all duration-300 text-left">
-                        🚪 Sign Out
+                        🚪 {translate('cancel')}
                       </button>
                     </div>
                   </div>
