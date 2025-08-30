@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Login() {
+  const { translate } = useLanguage();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
@@ -72,15 +74,15 @@ export default function Login() {
             <div className="w-16 h-16 bg-gradient-to-r from-[#0A2342] to-[#2ECC71] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <span className="text-white text-2xl">🔐</span>
             </div>
-            <h1 className="text-2xl font-bold text-[#333333]">Welcome Back</h1>
-            <p className="text-gray-600 mt-2">Login to access your dashboard</p>
+            <h1 className="text-2xl font-bold text-[#333333]">{translate('welcomeBack')}</h1>
+            <p className="text-gray-600 mt-2">{translate('loginToDashboard')}</p>
           </motion.div>
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <motion.div variants={itemVariants}>
               <label className="block text-sm font-medium text-[#333333] mb-2">
-                Email Address
+                {translate('emailAddress')}
               </label>
               <input
                 type="email"
@@ -95,7 +97,7 @@ export default function Login() {
 
             <motion.div variants={itemVariants}>
               <label className="block text-sm font-medium text-[#333333] mb-2">
-                Password
+                {translate('password')}
               </label>
               <input
                 type="password"

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useLanguage } from '../context/LanguageContext'
 
 const features = [
   {
@@ -30,6 +31,7 @@ const stats = [
 ]
 
 export default function Home() {
+  const { translate } = useLanguage()
   const [searchQuery, setSearchQuery] = useState('')
   const [currentStat, setCurrentStat] = useState(0)
   const [isSearching, setIsSearching] = useState(false)
@@ -79,13 +81,12 @@ export default function Home() {
             {/* Hero Text */}
             <div className="space-y-6 animate-fade-in-up">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                Smarter Commutes,
+                {translate('smarterCommutes')}
                 <br />
-                <span className="text-gradient">Greener Cities</span>
+                <span className="text-gradient">{translate('greenerCities')}</span>
               </h1>
               <p className="text-body max-w-3xl mx-auto text-gray-600">
-                Experience the future of public transportation with AI-powered tracking, 
-                real-time crowd predictions, and environmental impact monitoring.
+                {translate('experienceFuture')}
               </p>
             </div>
 
@@ -101,7 +102,7 @@ export default function Home() {
                       {stats[currentStat].number}
                     </div>
                     <div className="text-sm text-gray-600 font-medium">
-                      {stats[currentStat].label}
+                      {translate(stats[currentStat].label.replace(/\s+/g, ''))}
                     </div>
                   </div>
                 </div>
@@ -114,10 +115,10 @@ export default function Home() {
               style={{ animationDelay: '0.4s' }}
             >
               <Link to="/live" className="btn-primary text-lg">
-                🚌 Track Buses Now
+                🚌 {translate('trackBusesNow')}
               </Link>
               <Link to="/routes" className="btn-secondary text-lg">
-                🗺️ View Routes
+                🗺️ {translate('viewRoutes')}
               </Link>
             </div>
           </div>
@@ -128,8 +129,8 @@ export default function Home() {
       <section className="section-spacing bg-soft">
         <div className="container-modern">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Choose TransitTrack?</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto">Our platform combines cutting-edge technology with user-friendly design to transform your commuting experience.</p>
+            <h2 className="text-3xl font-bold mb-4">{translate('whyChooseTransitTrack')}</h2>
+            <p className="text-gray-600 max-w-3xl mx-auto">{translate('platformCombines')}</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -142,8 +143,12 @@ export default function Home() {
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 bg-gradient-to-br ${feature.gradient} text-white shadow-lg`}>
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <h3 className="text-xl font-bold mb-2">{translate(feature.title === 'Real-Time Tracking' ? "Real-TimeTracking" : 
+                                                 feature.title === 'AI Crowd Prediction' ? "AICrowdPrediction" : 
+                                                 "CarbonSavingsTracker")}</h3>
+                <p className="text-gray-600">{translate(feature.title === 'Real-Time Tracking' ? "Real-TimeTrackingDesc" : 
+                                                 feature.title === 'AI Crowd Prediction' ? "AICrowdPredictionDesc" : 
+                                                 "CarbonSavingsTrackerDesc")}</p>
               </div>
             ))}
           </div>
@@ -159,10 +164,10 @@ export default function Home() {
               <div className="space-y-6">
                 <div>
                   <h2 className="text-2xl font-bold mb-2">
-                    🔍 Find Your Bus
+                    🔍 {translate('findYourBus')}
                   </h2>
                   <p className="text-gray-600">
-                    Enter your route or destination to get instant tracking
+                    {translate('enterYourRoute')}
                   </p>
                 </div>
 
@@ -172,7 +177,7 @@ export default function Home() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Route number, bus stop, or destination..."
+                      placeholder={translate('routeNumberPlaceholder')}
                       className="input-modern text-lg"
                     />
                     <div className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -193,14 +198,14 @@ export default function Home() {
                         Searching...
                       </>
                     ) : (
-                      '🚀 Search Now'
+                      `🚀 ${translate('searchNow')}`
                     )}
                   </button>
                 </form>
 
                 {/* Quick Access */}
                 <div className="space-y-3">
-                  <p className="text-sm text-gray-500 font-medium">Popular searches:</p>
+                  <p className="text-sm text-gray-500 font-medium">{translate('popularSearches')}:</p>
                   <div className="flex flex-wrap gap-2">
                     {['Route 12A', 'Airport Express', 'Central Station', 'University'].map((term) => (
                       <button
@@ -221,10 +226,10 @@ export default function Home() {
               <div className="space-y-6">
                 <div>
                   <h2 className="text-section-title">
-                    📡 Live Transit Map
+                    📡 {translate('liveTransitMap')}
                   </h2>
                   <p className="text-body">
-                    Real-time visualization of active buses in your area
+                    {translate('realTimeVisualization')}
                   </p>
                 </div>
 
@@ -241,8 +246,8 @@ export default function Home() {
                   <div className="absolute bottom-4 left-4 right-4">
                     <div className="glass rounded-2xl p-4">
                       <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium text-gray-700">Active now:</span>
-                        <span className="text-emerald-600 font-bold">12 buses nearby</span>
+                        <span className="font-medium text-gray-700">{translate('activeNow')}:</span>
+                        <span className="text-emerald-600 font-bold">{translate('busesNearby', { count: 12 })}</span>
                       </div>
                     </div>
                   </div>
@@ -252,7 +257,7 @@ export default function Home() {
                   to="/live" 
                   className="btn-secondary w-full justify-center"
                 >
-                  🗺️ Open Full Map
+                  🗺️ {translate('openFullMap')}
                 </Link>
               </div>
             </div>
@@ -265,10 +270,10 @@ export default function Home() {
         <div className="container-modern">
           <div className="text-center mb-16">
             <h2 className="text-section-title">
-              Why Choose TransitTrack?
+              {translate('whyChooseTransitTrack')}
             </h2>
             <p className="text-body max-w-2xl mx-auto">
-              Advanced features designed for modern commuters and sustainable transportation
+              {translate('advancedFeatures')}
             </p>
           </div>
 
@@ -282,8 +287,12 @@ export default function Home() {
                 <div className={`w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br ${feature.gradient} flex items-center justify-center text-3xl shadow-lg group-hover:shadow-xl transition-all duration-300`}>
                   {feature.icon}
                 </div>
-                <h3 className="text-card-title">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-card-title">{translate(feature.title === 'Real-Time Tracking' ? 'Real-TimeTracking' : 
+                                                 feature.title === 'AI Crowd Prediction' ? 'AICrowdPrediction' : 
+                                                 'CarbonSavingsTracker')}</h3>
+                <p className="text-gray-600 leading-relaxed">{translate(feature.title === 'Real-Time Tracking' ? 'Real-TimeTrackingDesc' : 
+                                                 feature.title === 'AI Crowd Prediction' ? 'AICrowdPredictionDesc' : 
+                                                 'CarbonSavingsTrackerDesc')}</p>
               </div>
             ))}
           </div>
@@ -295,23 +304,23 @@ export default function Home() {
         <div className="container-modern text-center">
           <div className="space-y-8">
             <h2 className="text-4xl md:text-5xl font-bold animate-fade-in-up">
-              Ready to Transform Your Commute?
+              {translate('readyToTransform')}
             </h2>
             <p className="text-xl opacity-90 max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              Join thousands of smart commuters making a positive impact on the environment
+              {translate('joinThousands')}
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
               <Link 
                 to="/live" 
                 className="px-10 py-5 bg-white text-emerald-600 rounded-2xl font-bold text-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 glass"
               >
-                🚀 Start Tracking Now
+                🚀 {translate('startTrackingNow')}
               </Link>
               <Link 
                 to="/green" 
                 className="px-10 py-5 border-2 border-white bg-transparent text-white rounded-2xl font-bold text-lg hover:bg-white hover:text-emerald-600 transition-all duration-300 backdrop-blur-sm"
               >
-                🌱 See Environmental Impact
+                🌱 {translate('seeEnvironmentalImpact')}
               </Link>
             </div>
           </div>
