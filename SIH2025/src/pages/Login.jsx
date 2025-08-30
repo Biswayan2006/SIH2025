@@ -1,118 +1,146 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Login() {
-  const [formData, setFormData] = useState({ email: '', password: '' })
-  const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
-  
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    
-    // Simulate login process
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    // For demo purposes, any email/password combo works
+    e.preventDefault();
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     if (formData.email && formData.password) {
-      // Redirect to admin dashboard
-      navigate('/admin')
+      navigate("/admin");
     }
-    
-    setIsLoading(false)
-  }
-  
+    setIsLoading(false);
+  };
+
   const handleInputChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
-    }))
-  }
-  
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  // Track mouse globally
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  const containerVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    show: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.6, when: "beforeChildren", staggerChildren: 0.2 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="w-full max-w-md">
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-white/20">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+      {/* ✨ Moving Gradient Background */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(600px circle at ${cursorPos.x}px ${cursorPos.y}px, rgba(46,204,113,0.25), transparent 40%),
+                       linear-gradient(135deg, #0A2342 0%, #2ECC71 50%, #F1C40F 100%)`,
+        }}
+      />
+
+      {/* 🔹 Login Card */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="w-full max-w-md relative rounded-2xl shadow-2xl overflow-hidden z-10"
+      >
+        <div className="relative bg-white/90 backdrop-blur-lg rounded-2xl p-8 border border-gray-200">
+          {/* Icon + Title */}
+          <motion.div variants={itemVariants} className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-r from-[#0A2342] to-[#2ECC71] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <span className="text-white text-2xl">🔐</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-800">Admin Login</h1>
-            <p className="text-gray-600 mt-2">Access the administrative dashboard</p>
-          </div>
-          
+            <h1 className="text-2xl font-bold text-[#333333]">Welcome Back</h1>
+            <p className="text-gray-600 mt-2">Login to access your dashboard</p>
+          </motion.div>
+
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-[#333333] mb-2">
                 Email Address
               </label>
-              <input 
+              <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2ECC71] focus:border-[#2ECC71] transition-colors"
                 placeholder="admin@transittrack.com"
                 required
               />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-[#333333] mb-2">
                 Password
               </label>
-              <input 
+              <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2ECC71] focus:border-[#2ECC71] transition-colors"
                 placeholder="Enter your password"
                 required
               />
-            </div>
-            
-            <button 
-              type="submit"
-              disabled={isLoading}
-              className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Signing in...
-                </>
-              ) : (
-                <>
-                  🚀 Sign In
-                </>
-              )}
-            </button>
-          </form>
-          
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <button 
-              className="w-full px-6 py-3 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-              disabled
-            >
-              <span className="text-xl">🔗</span>
-              Continue with Google
-              <span className="text-sm bg-blue-100 text-blue-600 px-2 py-1 rounded-full ml-2">Soon</span>
-            </button>
-          </div>
-          
-          <div className="mt-6 text-center">
-            <div className="text-sm text-gray-600 mb-4">
-              <strong>Demo Access:</strong> Use any email and password to login
-            </div>
-            <div className="text-xs text-gray-500">
-              In production, this would integrate with your authentication system
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+            </motion.div>
 
+            {/* Buttons */}
+            <motion.div variants={itemVariants} className="flex gap-4 pt-4">
+              <motion.button
+                type="submit"
+                disabled={isLoading}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex-1 px-6 py-3 bg-[#0A2342] text-white rounded-lg font-medium hover:bg-[#2ECC71] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Signing in...
+                  </>
+                ) : (
+                  <>🚀 Login</>
+                )}
+              </motion.button>
+
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/signup")}
+                className="flex-1 px-6 py-3 bg-[#F1C40F] text-[#333333] rounded-lg font-medium hover:bg-[#e1b90d] transition-all duration-200"
+              >
+                ✨ Sign Up
+              </motion.button>
+            </motion.div>
+          </form>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
