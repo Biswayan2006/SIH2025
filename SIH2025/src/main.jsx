@@ -9,6 +9,7 @@ import RoutesTimetable from './pages/RoutesTimetable.jsx'
 import GreenScore from './pages/GreenScore.jsx'
 import Feedback from './pages/Feedback.jsx'
 import Login from './pages/Login.jsx'
+import SignUp from './pages/SignUp.jsx'
 import Accessibility from './pages/Accessibility.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
 import Profile from './pages/Profile.jsx'
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: 'profile', element: <Profile /> },
       { path: 'feedback', element: <Feedback /> },
       { path: 'login', element: <Login /> },
+      { path: 'signup', element: <SignUp /> },
       { path: 'accessibility', element: <Accessibility /> },
       { path: 'admin', element: <AdminDashboard /> },
     ],

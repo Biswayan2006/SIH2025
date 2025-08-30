@@ -1,10 +1,10 @@
 import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
 import BusAnimation from './BusAnimation';
-import { useLoading } from '../context/LoadingContext';
 
 const PageLoader = ({ fullScreen = true }) => {
   const { darkMode } = useTheme();
-  const { isInitialLoading } = useLoading();
+  const { translate } = useLanguage();
   
   return (
     <div 
@@ -16,13 +16,13 @@ const PageLoader = ({ fullScreen = true }) => {
         transition-all duration-300
       `}
     >
-      <BusAnimation className="mb-4" size={isInitialLoading ? "xl" : "lg"} />
+      <BusAnimation className="mb-4" />
       <div className="text-center">
         <h3 className={`text-xl font-semibold mb-1 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
-          Loading
+          {translate('loading')}
         </h3>
         <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
-          Please wait...
+          {translate('pleaseWait')}
         </p>
       </div>
     </div>

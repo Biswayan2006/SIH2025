@@ -10,8 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^7.0.0",
+    "@fortawesome/fontawesome-free": "^6.5.1",
+    "@dotlottie/react-player": "^1.6.19",
+    "@lottiefiles/react-lottie-player": "^3.6.0",
+    "framer-motion": "^12.23.12",
     "leaflet": "^1.9.4",
+    "lottie-react": "^2.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",

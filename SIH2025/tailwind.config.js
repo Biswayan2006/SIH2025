@@ -63,10 +63,6 @@ export default {
         'smoke-1': 'smokeAnimation 2s infinite',
         'smoke-2': 'smokeAnimation 2s infinite 0.4s',
         'smoke-3': 'smokeAnimation 2s infinite 0.8s',
-        'float': 'floatAnimation 6s ease-in-out infinite',
-        'pulse-slow': 'pulseSlowAnimation 2s ease-in-out infinite',
-        'road-marking': 'roadMarkingAnimation 2s linear infinite',
-        'scenery-move': 'sceneryMoveAnimation 15s linear infinite',
       },
       keyframes: {
         fadeInUp: {
@@ -104,22 +100,6 @@ export default {
           '50%': { opacity: '0.3', transform: 'translate(-10px, -10px) scale(2)' },
           '75%': { opacity: '0.1', transform: 'translate(-15px, -15px) scale(2.5)' },
           '100%': { opacity: '0', transform: 'translate(-20px, -20px) scale(3)' },
-        },
-        floatAnimation: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-5px)' },
-        },
-        pulseSlowAnimation: {
-          '0%, 100%': { opacity: '1', boxShadow: '0 0 0 rgba(255, 255, 0, 0)' },
-          '50%': { opacity: '0.8', boxShadow: '0 0 10px rgba(255, 255, 0, 0.5)' },
-        },
-        roadMarkingAnimation: {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-100px)' },
-        },
-        sceneryMoveAnimation: {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-500px)' },
         },
       },
       boxShadow: {
