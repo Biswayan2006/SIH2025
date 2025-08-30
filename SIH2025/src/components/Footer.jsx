@@ -7,6 +7,7 @@ export default function Layout({ children }) {
     <>
       {/* 🏗️ Page Content */}
       <main>{children}</main>
+      
 
       {/* 🌟 Footer */}
       <footer>
