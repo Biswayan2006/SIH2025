@@ -74,10 +74,10 @@ export const LoadingProvider = ({ children }) => {
 };
 
 // Custom hook to use the loading context
-export function useLoading() {
+export const useLoading = () => {
   const context = useContext(LoadingContext);
   if (context === undefined) {
     throw new Error('useLoading must be used within a LoadingProvider');
   }
   return context;
-}
+};

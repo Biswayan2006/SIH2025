@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
+import { useLanguage } from '../context/LanguageContext'
 
 // ✅ Language Selector
 function LanguageSelector() {
-  const [lang, setLang] = useState(localStorage.getItem('lang') || 'en')
+  const { language, setLanguage, translations } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
 
+  
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
@@ -15,11 +17,10 @@ function LanguageSelector() {
     { code: 'te', name: 'తెలుగు', flag: '🇮🇳' }
   ]
 
-  const currentLang = languages.find(l => l.code === lang)
+  const currentLang = languages.find(l => l.code === language)
 
   const handleSelect = (code) => {
-    setLang(code)
-    localStorage.setItem('lang', code)
+    setLanguage(code)
     setIsOpen(false)
   }
 
@@ -55,25 +56,32 @@ function LanguageSelector() {
 }
 
 // ✅ Nav items
-const navItems = [
-  { to: '/', label: 'Home' },
-  { to: '/live', label: 'Live Tracking' },
-  { to: '/routes', label: 'Routes' },
-  { to: '/green', label: 'Sustainability' },
-  { to: '/profile', label: 'Profile' },
-  { to: '/feedback', label: 'Feedback' },
-  { to: '/accessibility', label: 'Settings' }
+const getNavItems = (translate) => [
+  { to: '/', label: translate('home') },
+  { to: '/live', label: translate('liveTracking') },
+  { to: '/routes', label: translate('routes') },
+  { to: '/green', label: translate('sustainability') },
+  { to: '/profile', label: translate('profile') },
+  { to: '/feedback', label: translate('feedback') },
+  { to: '/accessibility', label: translate('settings') }
 ]
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
+  const { translate } = useLanguage()
+  const navItems = getNavItems(translate)
 
   useEffect(() => {
     setOpen(false)
   }, [location])
 
   const linkClass = ({ isActive }) =>
+    `relative font-medium px-3 py-1 text-gray-800 dark:text-white transition
+     after:content-[''] after:absolute after:w-0 after:h-[2px] after:left-0 after:-bottom-1 
+     after:bg-cyan-500 after:transition-all after:duration-300
+     hover:after:w-full hover:text-cyan-500
+     ${isActive ? 'text-cyan-500 after:w-full' : ''}`
     `relative font-medium px-2 py-1 text-gray-800 dark:text-white transition
      hover:text-cyan-500
      ${isActive ? 'text-cyan-500' : ''}`
@@ -85,7 +93,7 @@ export default function Navbar() {
   return (
     <>
       {/* Top Navbar */}
-      <nav className="fixed top-0 w-full bg-[#F8F9FA]/70 dark:bg-[#1a1a2e]/90 backdrop-blur-md shadow-lg flex justify-between items-center px-6 py-3 z-50 transition">
+      <nav className="fixed top-0 w-full bg-[#F8F9FA]/70 dark:bg-[#1a1a2e]/90 backdrop-blur-md shadow-lg flex justify-between items-center px-4 py-2 z-50 transition">
         
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
@@ -98,7 +106,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex gap-6 items-center">
+        <div className="hidden md:flex gap-6 lg:gap-12 items-center">
           {navItems.map(item => (
             <NavLink key={item.to} to={item.to} end={item.to === '/'} className={linkClass}>
               {item.label}
@@ -107,11 +115,11 @@ export default function Navbar() {
         </div>
 
         {/* Right Side */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-3">
           <LanguageSelector />
           <ThemeToggle />
-          <NavLink to="/login" className="hidden sm:inline-block bg-cyan-500 hover:bg-cyan-600 text-white px-4 py-2 rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition">
-            👤 Login
+          <NavLink to="/login" className="hidden sm:inline-block bg-cyan-500 hover:bg-cyan-600 text-white px-2 py-1 text-sm rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition">
+            {translate('login')}
           </NavLink>
         </div>
 
@@ -134,8 +142,8 @@ export default function Navbar() {
               {item.label}
             </NavLink>
           ))}
-          <NavLink to="/login" className="bg-[#1B9AAA] hover:bg-cyan-600 text-white px-6 py-2 rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition">
-            👤 Login
+          <NavLink to="/login" className="bg-[#1B9AAA] hover:bg-cyan-600 text-white px-4 py-1.5 text-sm rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition">
+            {translate('login')}
           </NavLink>
         </div>
       </div>

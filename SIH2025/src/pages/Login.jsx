@@ -1,118 +1,304 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from '../context/LanguageContext';
+// Added transportation-themed animation library
 
 export default function Login() {
-  const [formData, setFormData] = useState({ email: '', password: '' })
-  const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
+  const { translate } = useLanguage();
   
+  // CSS for animations
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes twinkle {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+    return () => document.head.removeChild(style);
+  }, []);
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    
-    // Simulate login process
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    // For demo purposes, any email/password combo works
+    e.preventDefault();
+    setIsLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     if (formData.email && formData.password) {
-      // Redirect to admin dashboard
-      navigate('/admin')
+      navigate("/admin");
     }
-    
-    setIsLoading(false)
-  }
-  
+    setIsLoading(false);
+  };
+
   const handleInputChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
-    }))
-  }
-  
-  return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="w-full max-w-md">
-        <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8 border border-white/20">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-white text-2xl">🔐</span>
-            </div>
-            <h1 className="text-2xl font-bold text-gray-800">Admin Login</h1>
-            <p className="text-gray-600 mt-2">Access the administrative dashboard</p>
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  // Track mouse globally
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setCursorPos({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  const containerVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    show: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.6, when: "beforeChildren", staggerChildren: 0.2 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
+  // Bus animation component
+  const BusAnimation = () => {
+    return (
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Night sky with stars */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0f1642] via-[#2c1d5b] to-[#5e2e7a]">
+          {/* Stars */}
+          {[...Array(100)].map((_, i) => {
+            const size = Math.random() * 2 + 1;
+            const animationDuration = Math.random() * 3 + 2;
+            return (
+              <div 
+                key={i}
+                className="absolute rounded-full bg-white"
+                style={{
+                  width: `${size}px`,
+                  height: `${size}px`,
+                  top: `${Math.random() * 100}%`,
+                  left: `${Math.random() * 100}%`,
+                  opacity: Math.random() * 0.7 + 0.3,
+                  animation: `twinkle ${animationDuration}s infinite ease-in-out`
+                }}
+              />
+            );
+          })}
+        </div>
+        
+        {/* Road */}
+        <div className="absolute bottom-0 w-full h-[25%] bg-[#1a1a1a]">
+          {/* Road markings */}
+          <div className="absolute top-0 w-full h-[10px] bg-[#444]" />
+          <div className="absolute top-1/2 w-full h-[10px] flex">
+            {[...Array(20)].map((_, i) => (
+              <motion.div 
+                key={i}
+                className="h-full w-[50px] bg-yellow-400 mx-[50px]"
+                initial={{ x: "100vw" }}
+                animate={{ x: "-100vw" }}
+                transition={{ 
+                  repeat: Infinity, 
+                  duration: 4,
+                  ease: "linear",
+                  delay: i * 0.2 % 2
+                }}
+              />
+            ))}
           </div>
-          
+        </div>
+        
+        {/* Moving Bus */}
+        <motion.div 
+          className="absolute bottom-[15%] h-[80px] w-[200px]"
+          initial={{ x: "-250px" }}
+          animate={{ x: "calc(100vw + 50px)" }}
+          transition={{ 
+            duration: 15, 
+            repeat: Infinity,
+            repeatType: "loop",
+            ease: "linear"
+          }}
+        >
+          {/* Bus body */}
+          <div className="relative h-full w-full">
+            <div className="absolute bottom-0 h-[60px] w-full bg-[#4361ee] rounded-t-xl rounded-r-3xl rounded-bl-lg shadow-lg" />
+            <div className="absolute bottom-0 left-[10px] h-[40px] w-[180px] bg-[#3a0ca3] rounded-t-lg" />
+            
+            {/* Windows */}
+            <div className="absolute bottom-[30px] left-[20px] right-[20px] h-[20px] flex space-x-2">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex-1 bg-[#4cc9f0] rounded-sm" />
+              ))}
+            </div>
+            
+            {/* Wheels */}
+            <div className="absolute bottom-[-10px] left-[30px] h-[20px] w-[20px] bg-[#333] rounded-full border-2 border-gray-400" />
+            <div className="absolute bottom-[-10px] right-[30px] h-[20px] w-[20px] bg-[#333] rounded-full border-2 border-gray-400" />
+            
+            {/* Lights */}
+            <div className="absolute bottom-[15px] right-0 h-[10px] w-[5px] bg-red-500" />
+            <div className="absolute bottom-[15px] left-0 h-[10px] w-[5px] bg-yellow-300" />
+          </div>
+        </motion.div>
+        
+        {/* City Skyline */}
+        <div className="absolute bottom-[25%] w-full">
+          <div className="relative h-[100px] w-full">
+            {[...Array(15)].map((_, i) => {
+              const width = Math.random() * 60 + 40;
+              const height = Math.random() * 80 + 20;
+              return (
+                <div 
+                  key={i}
+                  className="absolute bottom-0 bg-[#2b2d42] shadow-lg"
+                  style={{
+                    width: `${width}px`,
+                    height: `${height}px`,
+                    left: `${(i / 15) * 100}%`,
+                    opacity: 0.8
+                  }}
+                >
+                  {/* Building windows */}
+                  {[...Array(Math.floor(height / 15))].map((_, j) => (
+                    <div key={j} className="flex justify-center mt-3">
+                      {[...Array(Math.floor(width / 15))].map((_, k) => (
+                        <div 
+                          key={k} 
+                          className="h-[8px] w-[8px] mx-1 bg-yellow-100 opacity-70"
+                          style={{
+                            opacity: Math.random() > 0.3 ? 0.8 : 0
+                          }}
+                        />
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Animated Transportation Background */}
+      <BusAnimation />
+      
+      {/* Interactive cursor effect */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(300px circle at ${cursorPos.x}px ${cursorPos.y}px, rgba(76,201,240,0.15), transparent 30%)`,
+        }}
+      />
+
+      {/* Login Card */}
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="w-full max-w-md relative rounded-2xl shadow-2xl overflow-hidden z-10"
+      >
+        <div className="relative bg-[#1a1a3a]/80 backdrop-blur-lg rounded-2xl p-8 border border-[#4361ee]/30">
+          {/* Icon + Title */}
+          <motion.div variants={itemVariants} className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <span className="text-white text-2xl">🚌</span>
+            </div>
+            <h1 className="text-2xl font-bold text-white">{translate('welcomeBack')}</h1>
+            <p className="text-[#4cc9f0] mt-2">{translate('loginToDashboard')}</p>
+          </motion.div>
+
+          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-[#4cc9f0] mb-2">
+                {translate('emailAddress')}
               </label>
-              <input 
+              <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
-                placeholder="admin@transittrack.com"
+                className="w-full px-4 py-3 bg-[#0f1642]/50 border border-[#4361ee]/30 text-white rounded-lg focus:ring-2 focus:ring-[#4cc9f0] focus:border-[#4cc9f0] transition-colors placeholder-[#8d99ae]"
+                placeholder="admin@transitconnect.com"
                 required
               />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
+            </motion.div>
+
+            <motion.div variants={itemVariants}>
+              <label className="block text-sm font-medium text-[#4cc9f0] mb-2">
+                {translate('password')}
               </label>
-              <input 
+              <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
+                className="w-full px-4 py-3 bg-[#0f1642]/50 border border-[#4361ee]/30 text-white rounded-lg focus:ring-2 focus:ring-[#4cc9f0] focus:border-[#4cc9f0] transition-colors placeholder-[#8d99ae]"
                 placeholder="Enter your password"
                 required
               />
-            </div>
-            
-            <button 
-              type="submit"
-              disabled={isLoading}
-              className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Signing in...
-                </>
-              ) : (
-                <>
-                  🚀 Sign In
-                </>
-              )}
-            </button>
-          </form>
-          
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <button 
-              className="w-full px-6 py-3 bg-white border border-gray-300 rounded-lg font-medium text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
-              disabled
-            >
-              <span className="text-xl">🔗</span>
-              Continue with Google
-              <span className="text-sm bg-blue-100 text-blue-600 px-2 py-1 rounded-full ml-2">Soon</span>
-            </button>
-          </div>
-          
-          <div className="mt-6 text-center">
-            <div className="text-sm text-gray-600 mb-4">
-              <strong>Demo Access:</strong> Use any email and password to login
-            </div>
-            <div className="text-xs text-gray-500">
-              In production, this would integrate with your authentication system
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+            </motion.div>
 
+            <motion.div variants={itemVariants} className="flex items-center justify-between text-sm">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-[#4361ee] focus:ring-[#4cc9f0] border-[#4361ee]/30 rounded"
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-[#8d99ae]">
+                  Remember me
+                </label>
+              </div>
+              <div className="text-[#4cc9f0] hover:text-[#4361ee] cursor-pointer">
+                Forgot Password?
+              </div>
+            </motion.div>
+
+            {/* Buttons */}
+            <motion.div variants={itemVariants} className="flex gap-4 pt-4">
+              <motion.button
+                type="submit"
+                disabled={isLoading}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex-1 px-6 py-3 bg-[#4361ee] text-white rounded-lg font-medium hover:bg-[#3a0ca3] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Boarding...
+                  </>
+                ) : (
+                  <>🚌 Login</>
+                )}
+              </motion.button>
+
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate("/signup")}
+                className="flex-1 px-6 py-3 bg-[#4cc9f0] text-[#0f1642] rounded-lg font-medium hover:bg-[#90e0ef] transition-all duration-200"
+              >
+                🎫 Sign Up
+              </motion.button>
+            </motion.div>
+          </form>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 

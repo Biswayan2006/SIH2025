@@ -2,10 +2,13 @@ import { Outlet } from 'react-router-dom'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import { ThemeProvider } from './context/ThemeContext'
+import { LanguageProvider, useLanguage } from './context/LanguageContext'
 import { LoadingProvider } from './context/LoadingContext'
 import './App.css'
 
-function App() {
+function AppContent() {
+  const { translate } = useLanguage();
+  
   return (
     <ThemeProvider>
       <LoadingProvider>
@@ -18,6 +21,14 @@ function App() {
         </div>
       </LoadingProvider>
     </ThemeProvider>
+  )
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   )
 }
 
