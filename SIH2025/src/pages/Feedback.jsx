@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useLanguage } from '../context/LanguageContext'
 
 const sampleFeedback = [
   {
@@ -45,7 +44,6 @@ const sampleFeedback = [
 ]
 
 export default function Feedback() {
-  const { translate } = useLanguage();
   const [activeTab, setActiveTab] = useState('submit')
   const [formData, setFormData] = useState({
     type: 'issue',
@@ -63,16 +61,16 @@ export default function Feedback() {
   const [rating, setRating] = useState(0)
   
   const feedbackTypes = [
-    { value: 'issue', label: translate('reportIssue'), icon: '⚠️', color: 'text-red-600' },
-    { value: 'suggestion', label: translate('suggestRoute'), icon: '💡', color: 'text-blue-600' },
-    { value: 'rating', label: translate('rateBus'), icon: '⭐', color: 'text-yellow-600' },
-    { value: 'compliment', label: translate('compliments'), icon: '😊', color: 'text-green-600' }
+    { value: 'issue', label: 'Report an Issue', icon: '⚠️', color: 'text-red-600' },
+    { value: 'suggestion', label: 'Suggest a Route', icon: '💡', color: 'text-blue-600' },
+    { value: 'rating', label: 'Rate a Bus', icon: '⭐', color: 'text-yellow-600' },
+    { value: 'compliment', label: 'Give Compliment', icon: '😊', color: 'text-green-600' }
   ]
   
   const priorityLevels = [
-    { value: 'low', label: translate('low'), color: 'bg-green-100 text-green-800' },
-    { value: 'medium', label: translate('medium'), color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'high', label: translate('high'), color: 'bg-red-100 text-red-800' }
+    { value: 'low', label: 'Low', color: 'bg-green-100 text-green-800' },
+    { value: 'medium', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
+    { value: 'high', label: 'High', color: 'bg-red-100 text-red-800' }
   ]
   
   const statusColors = {
@@ -167,7 +165,7 @@ export default function Feedback() {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-            💬 {translate('submitFeedback')}
+            💬 Community Feedback
           </h1>
           <p className="text-gray-600 mt-1">
             Help improve public transit by sharing your experiences and suggestions
@@ -189,9 +187,9 @@ export default function Feedback() {
           <div className="border-b border-gray-200">
             <nav className="flex">
               {[
-                { id: 'submit', label: translate('submitFeedback'), icon: '✍️' },
-                { id: 'community', label: translate('viewFeedback'), icon: '💬' },
-                { id: 'my-feedback', label: translate('myFeedback'), icon: '📄' }
+                { id: 'submit', label: 'Submit Feedback', icon: '✍️' },
+                { id: 'community', label: 'Community Feedback', icon: '💬' },
+                { id: 'my-feedback', label: 'My Submissions', icon: '📄' }
               ].map((tab) => (
                 <button
                   key={tab.id}

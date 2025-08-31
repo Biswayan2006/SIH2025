@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 const sampleRoutes = [
   {
@@ -109,6 +109,16 @@ const popularDestinations = [
 ]
 
 export default function RoutePlanner() {
+  // Add smooth scrolling effect
+  useEffect(() => {
+    // Apply smooth scrolling to the entire document
+    document.documentElement.style.scrollBehavior = 'smooth';
+    
+    return () => {
+      // Clean up when component unmounts
+      document.documentElement.style.scrollBehavior = '';
+    };
+  }, []);
   const [fromLocation, setFromLocation] = useState('')
   const [toLocation, setToLocation] = useState('')
   const [ecoFriendlyMode, setEcoFriendlyMode] = useState(false)
@@ -117,6 +127,10 @@ export default function RoutePlanner() {
   const [selectedFilter, setSelectedFilter] = useState('all')
   const [query, setQuery] = useState('')
   const [showSuggestions, setShowSuggestions] = useState({ from: false, to: false })
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showSmartSchedule, setShowSmartSchedule] = useState(false)
+  const [selectedDay, setSelectedDay] = useState('Monday')
+  const searchRef = useRef(null)
 
   const handlePlanRoute = async (e) => {
     e.preventDefault()
@@ -142,12 +156,20 @@ export default function RoutePlanner() {
     }, 2000)
   }
 
+  // Enhanced search functionality
   const filteredRoutes = sampleRoutes.filter(route => {
-    const matchesQuery = query === '' || 
-      route.name.toLowerCase().includes(query.toLowerCase()) ||
-      route.id.toLowerCase().includes(query.toLowerCase()) ||
-      route.from.toLowerCase().includes(query.toLowerCase()) ||
-      route.to.toLowerCase().includes(query.toLowerCase())
+    if (!route) return false;
+    
+    const matchesQuery = (query === '' && searchQuery === '') || 
+      (route.name && route.name.toLowerCase().includes(query.toLowerCase())) ||
+      (route.id && route.id.toLowerCase().includes(query.toLowerCase())) ||
+      (route.from && route.from.toLowerCase().includes(query.toLowerCase())) ||
+      (route.to && route.to.toLowerCase().includes(query.toLowerCase())) ||
+      (route.name && route.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (route.id && route.id.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (route.from && route.from.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (route.to && route.to.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (route.features && Array.isArray(route.features) && route.features.some(feature => feature && feature.toLowerCase().includes(searchQuery.toLowerCase())))
     
     const matchesFilter = selectedFilter === 'all' || 
       route.type === selectedFilter ||
@@ -155,6 +177,16 @@ export default function RoutePlanner() {
     
     return matchesQuery && matchesFilter
   })
+  
+  // Smart schedule helper function
+  const getScheduleForDay = (day) => {
+    return {
+      morning: filteredRoutes.filter(route => route.nextDeparture.includes('min')).slice(0, 3),
+      afternoon: filteredRoutes.filter(route => route.type !== 'night').slice(0, 3),
+      evening: filteredRoutes.filter(route => route.type !== 'night').slice(0, 3),
+      night: filteredRoutes.filter(route => route.type === 'night' || (route.features && route.features.includes('Security'))).slice(0, 2)
+    }
+  }
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -184,26 +216,155 @@ export default function RoutePlanner() {
   }
 
   return (
-    <div className="min-h-screen bg-soft">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-emerald-50">
       <div className="container-modern section-spacing">
         {/* Hero Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+        <div className="text-center mb-12 pt-8">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-500 to-emerald-500">
             Smart Route Planner
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Plan your journey with AI-powered predictions and eco-friendly route options
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+            Plan your journey with <span className="text-blue-600 font-medium">AI-powered</span> predictions and <span className="text-emerald-500 font-medium">eco-friendly</span> route options
           </p>
         </div>
 
+        {/* Enhanced Search Bar */}
+        <div className="mb-8">
+          <div className="relative flex items-center max-w-2xl mx-auto">
+            <input
+              type="text"
+              placeholder="Search routes, destinations, or features..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              ref={searchRef}
+              className="w-full py-4 px-6 bg-white rounded-full shadow-lg border-2 border-transparent focus:border-blue-500 transition-all duration-300 text-gray-700 placeholder-gray-400 outline-none"
+            />
+            <button 
+              className="absolute right-2 p-3 bg-gradient-to-r from-blue-600 to-emerald-500 rounded-full text-white hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+              onClick={() => searchRef.current.focus()}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Smart Schedule Toggle */}
+        <div className="flex justify-center mb-8">
+          <button
+            onClick={() => setShowSmartSchedule(!showSmartSchedule)}
+            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-500 text-white rounded-full shadow-md hover:shadow-lg transition-all duration-300"
+          >
+            {showSmartSchedule ? '🗓️ Hide Smart Schedule' : '🗓️ Show Smart Schedule'}
+          </button>
+        </div>
+
+        {/* Smart Schedule */}
+        {showSmartSchedule && (
+          <div className="mb-12 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300">
+            <h2 className="text-2xl font-bold mb-6 text-center">Smart Schedule for {selectedDay}</h2>
+            
+            {/* Day Selector */}
+            <div className="flex justify-center gap-2 mb-8 overflow-x-auto pb-2">
+              {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(day => (
+                <button
+                  key={day}
+                  onClick={() => setSelectedDay(day)}
+                  className={`px-4 py-2 rounded-full transition-all duration-300 ${
+                    selectedDay === day 
+                      ? 'bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-md' 
+                      : 'bg-gray-100 hover:bg-gray-200'
+                  }`}
+                >
+                  {day.substring(0, 3)}
+                </button>
+              ))}
+            </div>
+            
+            {/* Time Slots */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Morning */}
+              <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                <h3 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+                  <span>☀️</span> Morning (6AM - 11AM)
+                </h3>
+                <div className="space-y-2">
+                  {getScheduleForDay(selectedDay).morning.map((route, idx) => (
+                    <div key={idx} className="bg-white rounded-lg p-3 shadow-sm">
+                      <div className="font-medium">{route.name}</div>
+                      <div className="text-sm text-gray-500">
+                        {route.from} → {route.to}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Afternoon */}
+              <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
+                <h3 className="font-medium text-yellow-800 mb-3 flex items-center gap-2">
+                  <span>🌤️</span> Afternoon (11AM - 4PM)
+                </h3>
+                <div className="space-y-2">
+                  {getScheduleForDay(selectedDay).afternoon.map((route, idx) => (
+                    <div key={idx} className="bg-white rounded-lg p-3 shadow-sm">
+                      <div className="font-medium">{route.name}</div>
+                      <div className="text-sm text-gray-500">
+                        {route.from} → {route.to}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Evening */}
+              <div className="bg-orange-50 rounded-xl p-4 border border-orange-100">
+                <h3 className="font-medium text-orange-800 mb-3 flex items-center gap-2">
+                  <span>🌆</span> Evening (4PM - 8PM)
+                </h3>
+                <div className="space-y-2">
+                  {getScheduleForDay(selectedDay).evening.map((route, idx) => (
+                    <div key={idx} className="bg-white rounded-lg p-3 shadow-sm">
+                      <div className="font-medium">{route.name}</div>
+                      <div className="text-sm text-gray-500">
+                        {route.from} → {route.to}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Night */}
+              <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
+                <h3 className="font-medium text-indigo-800 mb-3 flex items-center gap-2">
+                  <span>🌙</span> Night (8PM - 6AM)
+                </h3>
+                <div className="space-y-2">
+                  {getScheduleForDay(selectedDay).night && getScheduleForDay(selectedDay).night.map((route, idx) => (
+                    <div key={idx} className="bg-white rounded-lg p-3 shadow-sm">
+                      <div className="font-medium">{route.name}</div>
+                      <div className="text-sm text-gray-500">
+                        {route.from} → {route.to}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Route Planning Form */}
-        <div className="card-modern p-8 mb-8 animate-fade-in-up shadow-card rounded-2xl">
-          <form onSubmit={handlePlanRoute} className="space-y-6">
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-500">Plan Your Route</h2>
+          
+          <form onSubmit={handlePlanRoute} className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6">
             <div className="grid md:grid-cols-2 gap-6">
               {/* From Input */}
               <div className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  🚩 From
+                  From
                 </label>
                 <div className="relative">
                   <input
@@ -212,20 +373,20 @@ export default function RoutePlanner() {
                     onChange={(e) => setFromLocation(e.target.value)}
                     onFocus={() => setShowSuggestions({ ...showSuggestions, from: true })}
                     onBlur={() => setTimeout(() => setShowSuggestions({ ...showSuggestions, from: false }), 200)}
-                    placeholder="Enter pickup location..."
-                    className="input-modern pl-12 rounded-full"
+                    placeholder="   Enter starting point..."
+                    className="input-modern pl-12 rounded-full w-full py-3 px-4 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
                   />
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-emerald-500">
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     </svg>
                   </div>
                 </div>
-                
+
                 {/* Suggestions */}
                 {showSuggestions.from && (
                   <div className="absolute top-full mt-2 w-full glass rounded-2xl shadow-glass overflow-hidden z-50">
-                    {popularDestinations.slice(0, 4).map((dest, index) => (
+                    {popularDestinations.map((dest, index) => (
                       <button
                         key={index}
                         type="button"
@@ -243,7 +404,7 @@ export default function RoutePlanner() {
               {/* To Input */}
               <div className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  🎯 To
+                  To
                 </label>
                 <div className="relative">
                   <input
@@ -252,10 +413,10 @@ export default function RoutePlanner() {
                     onChange={(e) => setToLocation(e.target.value)}
                     onFocus={() => setShowSuggestions({ ...showSuggestions, to: true })}
                     onBlur={() => setTimeout(() => setShowSuggestions({ ...showSuggestions, to: false }), 200)}
-                    placeholder="Enter destination..."
-                    className="input-modern pl-12 rounded-full"
+                    placeholder="   Enter destination..."
+                    className="input-modern pl-12 rounded-full w-full py-3 px-4 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
                   />
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-blue-500">
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                     </svg>
@@ -282,39 +443,39 @@ export default function RoutePlanner() {
             </div>
 
             {/* Eco Toggle */}
-            <div className="flex items-center justify-between p-4 bg-emerald-50 rounded-2xl border border-emerald-200 shadow-sm">
+            <div className="flex items-center justify-between p-4 bg-emerald-50 rounded-2xl border border-emerald-200 shadow-sm mt-6">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xl shadow-sm">
                   🌱
                 </div>
                 <div>
-                  <h3 className="font-semibold text-emerald-800">Eco-Friendly Routes</h3>
-                  <p className="text-sm text-emerald-600">Prioritize buses with lower carbon impact</p>
+                  <h3 className="font-medium text-emerald-800">Eco-Friendly Mode</h3>
+                  <p className="text-sm text-emerald-600">Prioritize routes with lower carbon footprint</p>
                 </div>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
+                <input 
+                  type="checkbox" 
                   checked={ecoFriendlyMode}
-                  onChange={(e) => setEcoFriendlyMode(e.target.checked)}
-                  className="sr-only peer"
+                  onChange={() => setEcoFriendlyMode(!ecoFriendlyMode)}
+                  className="sr-only peer" 
                 />
-                <div className="relative w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-600 shadow-inner"></div>
-                <span className="ml-2 text-sm font-medium text-gray-700 transition-colors duration-300 peer-checked:text-emerald-600">
-                  {ecoFriendlyMode ? 'On' : 'Off'}
-                </span>
+                <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500"></div>
               </label>
             </div>
 
-            {/* Plan Button */}
+            {/* Submit Button */}
             <button
               type="submit"
-              disabled={isPlanning || !fromLocation.trim() || !toLocation.trim()}
-              className="btn-primary w-full text-lg py-4 flex items-center justify-center gap-2 rounded-full shadow-glass transition-all duration-300 hover:shadow-lg"
+              disabled={isPlanning}
+              className="w-full mt-6 py-4 px-6 bg-gradient-to-r from-blue-600 to-emerald-500 text-white rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2 font-medium"
             >
               {isPlanning ? (
                 <>
-                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
                   Planning Route...
                 </>
               ) : (
@@ -329,199 +490,140 @@ export default function RoutePlanner() {
           </form>
         </div>
 
-        {/* Route Result */}
-        {routeResult && (
-          <div className="card-modern p-8 mb-8 animate-fade-in-up">
-            <h2 className="text-section-title mb-6 flex items-center gap-2">
-              🎯 Recommended Route
-            </h2>
+        {/* Routes Grid */}
+        <div className="mb-12">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-emerald-500">Available Routes</h2>
             
-            <div className="grid lg:grid-cols-3 gap-6">
-              {/* Main Route Card */}
-              <div className="lg:col-span-2 space-y-6">
-                <div className="p-6 bg-gradient-to-r from-emerald-50 to-blue-50 rounded-3xl border border-emerald-200">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
-                        {getTypeIcon(routeResult.route.type)} {routeResult.route.name}
-                      </h3>
-                      <p className="text-gray-600">Route {routeResult.route.id}</p>
-                    </div>
-                    <span className={`status-indicator ${getStatusColor(routeResult.route.status)}`}>                      {routeResult.route.status}
-                    </span>
-                  </div>
-                  
-                  <div className="grid md:grid-cols-3 gap-4 mb-4">
-                    <div className="text-center p-3 bg-white/70 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-card">
-                      <div className="text-2xl font-bold text-emerald-600">{routeResult.totalTime}</div>
-                      <div className="text-sm text-gray-600">Total Time</div>
-                    </div>
-                    <div className="text-center p-3 bg-white/70 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-card">
-                      <div className="text-2xl font-bold text-blue-600">{routeResult.totalFare}</div>
-                      <div className="text-sm text-gray-600">Fare</div>
-                    </div>
-                    <div className="text-center p-3 bg-white/70 rounded-2xl shadow-sm transition-all duration-300 hover:shadow-card">
-                      <div className="text-2xl font-bold text-green-600">{routeResult.co2Saved}</div>
-                      <div className="text-sm text-gray-600">CO₂ Saved</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">Next departure:</span>
-                      <span className="font-bold text-emerald-600">{routeResult.route.nextDeparture}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-600">Crowd level:</span>
-                      <span className={`font-medium ${getCrowdColor(routeResult.route.crowdPrediction)}`}>
-                        {routeResult.route.crowdPrediction}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Alternative Routes */}
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-800 mb-3">Alternative Routes</h4>
-                  <div className="space-y-3">
-                    {routeResult.alternatives.map((route, index) => (
-                      <div key={index} className="p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-all duration-300 shadow-sm hover:shadow-card">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <span className="font-medium text-gray-800">{route.name}</span>
-                            <span className="text-sm text-gray-600 ml-2">({route.duration})</span>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="text-sm font-medium text-gray-700">{route.fare}</span>
-                            <span className={`text-sm ${getCrowdColor(route.crowdPrediction)}`}>
-                              {route.crowdPrediction}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              
-              {/* Action Panel */}
-              <div className="space-y-4">
-                <button className="btn-primary w-full rounded-full shadow-glass transition-all duration-300 hover:shadow-lg">
-                  🚀 Start Journey
-                </button>
-                <button className="btn-secondary w-full rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
-                  📍 Set Reminder
-                </button>
-                <button className="btn-secondary w-full rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
-                  📤 Share Route
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Browse All Routes */}
-        <div className="card-modern p-8 shadow-card rounded-2xl">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-            <h2 className="text-section-title font-bold text-gray-800">🚌 All Routes</h2>
-            
-            {/* Search and Filter */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="relative">
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search routes..."
-                  className="input-modern pl-10 rounded-full"
-                />
-                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-              </div>
-              <select 
-                value={selectedFilter} 
-                onChange={(e) => setSelectedFilter(e.target.value)}
-                className="input-modern rounded-full"
+            <div className="flex flex-wrap gap-2">
+              <button 
+                onClick={() => setSelectedFilter('all')}
+                className={`px-4 py-2 rounded-full transition-all duration-300 ${
+                  selectedFilter === 'all' 
+                    ? 'bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-md' 
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
               >
-                <option value="all">All Types</option>
-                <option value="express">Express</option>
-                <option value="regular">Regular</option>
-                <option value="night">Night</option>
-                <option value="campus">Campus</option>
-              </select>
+                All
+              </button>
+              <button 
+                onClick={() => setSelectedFilter('active')}
+                className={`px-4 py-2 rounded-full transition-all duration-300 ${
+                  selectedFilter === 'active' 
+                    ? 'bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-md' 
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+              >
+                Active
+              </button>
+              <button 
+                onClick={() => setSelectedFilter('express')}
+                className={`px-4 py-2 rounded-full transition-all duration-300 ${
+                  selectedFilter === 'express' 
+                    ? 'bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-md' 
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+              >
+                Express
+              </button>
+              <button 
+                onClick={() => setSelectedFilter('eco')}
+                className={`px-4 py-2 rounded-full transition-all duration-300 ${
+                  selectedFilter === 'eco' 
+                    ? 'bg-gradient-to-r from-blue-600 to-emerald-500 text-white shadow-md' 
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+              >
+                Eco-Friendly
+              </button>
             </div>
           </div>
           
-          {/* Routes Grid */}
-          <div className="grid-responsive">
+          <div className="grid-responsive gap-6">
             {filteredRoutes.map((route, index) => (
-              <div 
-                key={route.id} 
-                className="p-6 bg-soft rounded-2xl shadow-card hover:shadow-lg transition-all duration-300 animate-fade-in-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
+              <div
+                key={index}
+                className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300"
               >
-                {/* Route Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-gradient-primary rounded-full shadow-sm flex items-center justify-center text-white text-xl">
-                      {getTypeIcon(route.type)}
+                <div className="bg-gradient-to-r from-blue-600 to-emerald-500 p-4 text-white">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">{getTypeIcon(route.type)}</span>
+                      <h3 className="font-bold">{route.name}</h3>
                     </div>
-                    <div>
-                      <h3 className="font-bold text-gray-800">{route.name}</h3>
-                      <p className="text-sm text-gray-600">Route {route.id}</p>
-                    </div>
+                    <span className="text-sm font-medium px-3 py-1 bg-white/20 rounded-full">
+                      {route.id}
+                    </span>
                   </div>
-                  <span className={`status-indicator ${getStatusColor(route.status)}`}>
-                    {route.status}
-                  </span>
                 </div>
                 
-                {/* Route Details */}
-                <div className="space-y-3 mb-4">
-                  <div className="flex items-center gap-2 text-sm bg-white/50 p-2 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md">
-                    <span className="text-gray-600">From:</span>
-                    <span className="font-medium">{route.from}</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-sm bg-white/50 p-2 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md">
-                    <span className="text-gray-600">To:</span>
-                    <span className="font-medium">{route.to}</span>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div className="bg-white/50 p-2 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md">
-                      <span className="text-gray-600">Duration:</span>
+                <div className="p-4">
+                  <div className="flex justify-between mb-3">
+                    <div>
+                      <div className="text-sm text-gray-500">From</div>
+                      <div className="font-medium">{route.from}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm text-gray-500">Duration</div>
                       <div className="font-medium">{route.duration}</div>
                     </div>
-                    <div className="bg-white/50 p-2 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md">
-                      <span className="text-gray-600">Fare:</span>
-                      <div className="font-medium text-emerald-600">{route.fare}</div>
+                    <div className="text-right">
+                      <div className="text-sm text-gray-500">To</div>
+                      <div className="font-medium">{route.to}</div>
                     </div>
-                    <div className="bg-white/50 p-2 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md">
-                      <span className="text-gray-600">Next:</span>
+                  </div>
+                  
+                  <div className="flex justify-between mb-4">
+                    <div>
+                      <div className="text-sm text-gray-500">Fare</div>
+                      <div className="font-medium">{route.fare}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500">Frequency</div>
+                      <div className="font-medium">{route.frequency}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm text-gray-500">Next</div>
                       <div className="font-medium">{route.nextDeparture}</div>
                     </div>
                   </div>
-                </div>
-                
-                {/* Features */}
-                <div className="mb-4">
-                  <div className="flex flex-wrap gap-1">
-                    {route.features.map((feature, index) => (
-                      <span key={index} className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium shadow-sm transition-all duration-300 hover:shadow-md">
+                  
+                  <div className="flex justify-between mb-4">
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm text-gray-500">Crowd:</span>
+                      <span className={getCrowdColor(route.crowdPrediction)}>
+                        {route.crowdPrediction && route.crowdPrediction.charAt(0).toUpperCase() + route.crowdPrediction.slice(1)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-sm text-gray-500">Eco Score:</span>
+                      <span className={`font-medium ${
+                        route.ecoScore > 90 ? 'text-green-600' : 
+                        route.ecoScore > 80 ? 'text-green-500' : 
+                        route.ecoScore > 70 ? 'text-yellow-600' : 'text-red-500'
+                      }`}>
+                        {route.ecoScore}/100
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {route.features && route.features.map((feature, idx) => (
+                      <span 
+                        key={idx}
+                        className="text-xs px-2 py-1 bg-gray-100 rounded-full"
+                      >
                         {feature}
                       </span>
                     ))}
                   </div>
+                  
+                  <button
+                    className="w-full text-sm rounded-full shadow-sm transition-all duration-300 hover:shadow-md py-3 bg-gradient-to-r from-blue-600 to-emerald-500 text-white font-medium"
+                  >
+                    📍 Track Live
+                  </button>
                 </div>
-                
-                {/* Action Button */}
-                <button className="btn-secondary w-full text-sm rounded-full shadow-sm transition-all duration-300 hover:shadow-md">
-                  📍 Track Live
-                </button>
               </div>
             ))}
           </div>

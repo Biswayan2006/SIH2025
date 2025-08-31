@@ -142,7 +142,6 @@ const translations = {
     eta: 'ETA',
     occupancy: 'Occupancy'
   },
-  // bn language is already defined above, removing duplicate
   hi: {
     home: 'होम',
     liveTracking: 'लाइव ट्रैकिंग',
