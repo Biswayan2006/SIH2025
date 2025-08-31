@@ -192,10 +192,10 @@ export default function LiveTracking() {
   const filteredBuses = filterCrowd === 'all' ? buses : buses.filter(bus => bus.crowd === filterCrowd)
   
   return (
-    <div className="min-h-screen bg-soft">
+    <div className="pb-0 min-h-0 pl-0 ml-0 w-screen pt-20">
       {/* Status Banner */}
       {!isOnline && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 glass rounded-2xl px-6 py-3 shadow-glass border border-yellow-300">
+        <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 glass rounded-2xl px-6 py-3 shadow-glass border border-yellow-300">
           <div className="flex items-center gap-3 text-yellow-800">
             <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
             <span className="font-medium">Offline Mode - Showing cached data</span>
@@ -203,9 +203,9 @@ export default function LiveTracking() {
         </div>
       )}
       
-      <div className="container-modern section-spacing">
+      <div className="pb-0 pt-0 mb-0 pl-0 ml-0 w-full pr-0 mr-0">
         {/* Modern Header */}
-        <div className="card-modern p-6 mb-6 shadow-glass">
+        <div className="card-modern p-6 mb-6 shadow-glass w-full mx-0">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
@@ -252,15 +252,15 @@ export default function LiveTracking() {
           </div>
         </div>
         
-        <div className="grid lg:grid-cols-[1fr_400px] gap-6">
+        <div className="grid lg:grid-cols-[1fr_400px] gap-0 mb-0 pb-0 w-full mx-0 px-0 overflow-hidden">
           {/* Map Section */}
-          <div className="card-modern overflow-hidden shadow-card rounded-2xl">
-            <div className="h-[60vh] lg:h-[80vh] relative">
+          <div className="card-modern overflow-hidden shadow-card rounded-2xl h-full mb-0 ml-0 pl-0 pr-0 mr-0">
+            <div className="h-[80vh] lg:h-[calc(100vh-80px)] relative">
               <MapContainer 
                 ref={mapRef}
                 center={[28.6139, 77.209]} 
                 zoom={13} 
-                style={{ height: '100%', width: '100%' }}
+                style={{ height: '100%', width: '100%', margin: 0, padding: 0 }}
                 className="rounded-3xl"
               >
                 <TileLayer
@@ -324,8 +324,8 @@ export default function LiveTracking() {
           </div>
           
           {/* Sidebar */}
-          <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block`}>
-            <div className="space-y-6">
+          <div className={`${sidebarOpen ? 'block' : 'hidden'} lg:block h-full`}>
+            <div className="space-y-6 h-full overflow-y-auto">
               {/* Quick Stats */}
               <div className="card-modern p-6 shadow-card rounded-2xl">
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">📊 Live Stats</h3>
