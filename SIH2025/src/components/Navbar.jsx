@@ -8,6 +8,7 @@ function LanguageSelector() {
   const { language, setLanguage, translations } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
 
+  
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
@@ -81,6 +82,9 @@ export default function Navbar() {
      after:bg-cyan-500 after:transition-all after:duration-300
      hover:after:w-full hover:text-cyan-500
      ${isActive ? 'text-cyan-500 after:w-full' : ''}`
+    `relative font-medium px-2 py-1 text-gray-800 dark:text-white transition
+     hover:text-cyan-500
+     ${isActive ? 'text-cyan-500' : ''}`
 
   const mobileClass = ({ isActive }) =>
     `block text-lg py-2 text-center transition-colors
@@ -124,7 +128,7 @@ export default function Navbar() {
           className={`md:hidden flex flex-col justify-between w-8 h-6 cursor-pointer ${open ? 'open' : ''}`}
           onClick={() => setOpen(!open)}
         >
-          <span className={`h-1 w-full bg-gray-800 dark:bg-white rounded transition ${open ? 'rotate-45 translate-y-2 bg-cyan-500' : ''}`} />
+          <span className={`h-1 w-full bg-gray-800 dark:bg-white rounded transition ${open ? 'rotate-45 translate-y-2.5 bg-cyan-500' : ''}`} />
           <span className={`h-1 w-full bg-gray-800 dark:bg-white rounded transition ${open ? 'opacity-0' : ''}`} />
           <span className={`h-1 w-full bg-gray-800 dark:bg-white rounded transition ${open ? '-rotate-45 -translate-y-2 bg-cyan-500' : ''}`} />
         </div>
