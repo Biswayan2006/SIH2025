@@ -82,9 +82,6 @@ export default function Navbar() {
      after:bg-cyan-500 after:transition-all after:duration-300
      hover:after:w-full hover:text-cyan-500
      ${isActive ? 'text-cyan-500 after:w-full' : ''}`
-    `relative font-medium px-2 py-1 text-gray-800 dark:text-white transition
-     hover:text-cyan-500
-     ${isActive ? 'text-cyan-500' : ''}`
 
   const mobileClass = ({ isActive }) =>
     `block text-lg py-2 text-center transition-colors
