@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Popup, Polyline } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
+import { useLanguage } from '../context/LanguageContext'
 
 const sampleBuses = [
   { 
@@ -96,6 +97,8 @@ function crowdIcon(level) {
 }
 
 function BusMarker({ bus, isSelected, onClick }) {
+  const { translate } = useLanguage();
+  
   return (
     <CircleMarker
       center={[bus.lat, bus.lng]}
@@ -114,19 +117,19 @@ function BusMarker({ bus, isSelected, onClick }) {
         <div className="p-2 min-w-48">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg font-bold">{bus.id}</span>
-            <span className="status-indicator status-green text-xs">Route {bus.route}</span>
+            <span className="status-indicator status-green text-xs">{translate('route')} {bus.route}</span>
           </div>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600">Next Stop:</span>
+              <span className="text-gray-600">{translate('nextStop')}:</span>
               <span className="font-medium">{bus.nextStop}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">ETA:</span>
+              <span className="text-gray-600">{translate('eta')}:</span>
               <span className="font-medium text-emerald-600">{bus.eta}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Occupancy:</span>
+              <span className="text-gray-600">{translate('occupancy')}:</span>
               <span className={`font-medium ${bus.crowd === 'low' ? 'text-green-600' : bus.crowd === 'medium' ? 'text-yellow-600' : 'text-red-600'}`}>
                 {Math.round((bus.occupancy / bus.capacity) * 100)}%
               </span>
