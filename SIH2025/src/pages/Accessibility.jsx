@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react'
-import { useLanguage } from '../context/LanguageContext'
 
 export default function Accessibility() {
-  const { translate } = useLanguage();
   const [settings, setSettings] = useState({
     largeText: false,
     highContrast: false,
@@ -131,10 +129,10 @@ export default function Accessibility() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
               <h1 className={`text-3xl font-bold ${textClass} flex items-center gap-2`}>
-                ♿ {translate('accessibilityAndSettings')}
+                ♿ Accessibility & Settings
               </h1>
               <p className={subtextClass + ' mt-1'}>
-                {translate('customizeExperience')}
+                Customize your experience for better accessibility and language preferences
               </p>
             </div>
             
@@ -142,7 +140,7 @@ export default function Accessibility() {
               onClick={resetSettings}
               className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
             >
-              {translate('resetToDefault')}
+              Reset to Default
             </button>
           </div>
         </div>
@@ -151,14 +149,14 @@ export default function Accessibility() {
           {/* Visual Accessibility */}
           <div className={cardClass}>
             <h2 className={`text-xl font-semibold ${textClass} mb-4 flex items-center gap-2`}>
-              👁️ {translate('visualAccessibility')}
+              👁️ Visual Accessibility
             </h2>
             
             <div className="space-y-4">
               {/* Font Size */}
               <div>
                 <label className={`block text-sm font-medium ${textClass} mb-2`}>
-                  {translate('fontSize')}
+                  Font Size
                 </label>
                 <select
                   value={settings.fontSize}
@@ -167,10 +165,10 @@ export default function Accessibility() {
                     settings.highContrast ? 'bg-gray-800 border-gray-600 text-white' : 'bg-white border-gray-300'
                   }`}
                 >
-                  <option value="small">{translate('small')}</option>
-                  <option value="medium">{translate('medium')}</option>
-                  <option value="large">{translate('large')}</option>
-                  <option value="extra-large">{translate('extraLarge')}</option>
+                  <option value="small">Small (14px)</option>
+                  <option value="medium">Medium (16px)</option>
+                  <option value="large">Large (18px)</option>
+                  <option value="extra-large">Extra Large (22px)</option>
                 </select>
               </div>
               
@@ -183,8 +181,8 @@ export default function Accessibility() {
                   className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <div>
-                  <span className={`font-medium ${textClass}`}>{translate('highContrastMode')}</span>
-                  <p className={`text-sm ${subtextClass}`}>{translate('increaseContrast')}</p>
+                  <span className={`font-medium ${textClass}`}>High Contrast Mode</span>
+                  <p className={`text-sm ${subtextClass}`}>Increase contrast for better visibility</p>
                 </div>
               </label>
               
@@ -197,8 +195,8 @@ export default function Accessibility() {
                   className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <div>
-                  <span className={`font-medium ${textClass}`}>{translate('reduceMotion')}</span>
-                  <p className={`text-sm ${subtextClass}`}>{translate('reduceMotionDesc')}</p>
+                  <span className={`font-medium ${textClass}`}>Reduce Motion</span>
+                  <p className={`text-sm ${subtextClass}`}>Minimize animations and transitions</p>
                 </div>
               </label>
               
@@ -211,8 +209,8 @@ export default function Accessibility() {
                   className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <div>
-                  <span className={`font-medium ${textClass}`}>{translate('colorBlindSupport')}</span>
-                  <p className={`text-sm ${subtextClass}`}>{translate('colorBlindSupportDesc')}</p>
+                  <span className={`font-medium ${textClass}`}>Color Blind Support</span>
+                  <p className={`text-sm ${subtextClass}`}>Use patterns and symbols alongside colors</p>
                 </div>
               </label>
               
@@ -245,7 +243,7 @@ export default function Accessibility() {
           {/* Audio & Voice */}
           <div className={cardClass}>
             <h2 className={`text-xl font-semibold ${textClass} mb-4 flex items-center gap-2`}>
-              🎙️ {translate('audioAccessibility')}
+              🎙️ Audio & Voice
             </h2>
             
             <div className="space-y-4">
@@ -258,8 +256,8 @@ export default function Accessibility() {
                   className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <div>
-                  <span className={`font-medium ${textClass}`}>{translate('voiceAnnouncements')}</span>
-                  <p className={`text-sm ${subtextClass}`}>{translate('voiceAnnouncementsDesc')}</p>
+                  <span className={`font-medium ${textClass}`}>Voice Announcements</span>
+                  <p className={`text-sm ${subtextClass}`}>Hear ETA and bus information aloud</p>
                 </div>
               </label>
               
@@ -276,7 +274,7 @@ export default function Accessibility() {
                   </>
                 ) : (
                   <>
-                    🔊 {translate('testVoice')}
+                    🔊 Test Voice Announcement
                   </>
                 )}
               </button>
@@ -290,8 +288,8 @@ export default function Accessibility() {
                   className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <div>
-                  <span className={`font-medium ${textClass}`}>{translate('screenReader')}</span>
-                  <p className={`text-sm ${subtextClass}`}>{translate('screenReaderDesc')}</p>
+                  <span className={`font-medium ${textClass}`}>Screen Reader Optimization</span>
+                  <p className={`text-sm ${subtextClass}`}>Enhanced compatibility with screen readers</p>
                 </div>
               </label>
             </div>
@@ -300,13 +298,13 @@ export default function Accessibility() {
           {/* Language Settings */}
           <div className={cardClass}>
             <h2 className={`text-xl font-semibold ${textClass} mb-4 flex items-center gap-2`}>
-              🌍 {translate('languagePreferences')}
+              🌍 Language & Regional
             </h2>
             
             <div className="space-y-4">
               <div>
                 <label className={`block text-sm font-medium ${textClass} mb-2`}>
-                  {translate('selectLanguage')}
+                  Display Language
                 </label>
                 <select
                   value={settings.language}
