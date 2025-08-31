@@ -223,12 +223,13 @@ export default function Navbar() {
           </div>
           
           {/* Bottom section */}
-          <div className="mt-auto border-t border-gray-200 dark:border-gray-700 pt-4 mt-6 flex flex-col items-center space-y-4">
-            <div className="flex items-center justify-center space-x-4">
-              <LanguageSelector />
-              <ThemeToggle />
-            </div>
-          </div>
+          <div className="mt-auto border-t border-gray-200 dark:border-gray-700 pt-4 flex flex-col items-center space-y-4">
+  <div className="flex items-center justify-center space-x-4">
+    <LanguageSelector />
+    <ThemeToggle />
+  </div>
+</div>
+
         </div>
       </div>
     </>
