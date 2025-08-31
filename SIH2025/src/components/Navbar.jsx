@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
 import { useLanguage } from '../context/LanguageContext'
@@ -7,7 +7,7 @@ import { useLanguage } from '../context/LanguageContext'
 function LanguageSelector() {
   const { language, setLanguage, translations } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useState(null)
+  const dropdownRef = useRef(null)
 
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
@@ -105,7 +105,7 @@ export default function Navbar() {
   const location = useLocation()
   const { translate } = useLanguage()
   const navItems = getNavItems(translate)
-  const menuRef = useState(null)
+  const menuRef = useRef(null)
 
   useEffect(() => {
     setOpen(false)
