@@ -3,6 +3,12 @@ import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { useTheme } from '../context/ThemeContext'
 
+// Import images for carousel
+import bus1 from '../assets/bus_1.jpeg'
+import bus2 from '../assets/bus_2.jpg'
+import metro1 from '../assets/metro_1.jpg'
+import train1 from '../assets/train_1.webp'
+
 const features = [
   {
     icon: '🎯',
@@ -38,6 +44,10 @@ export default function Home() {
   const [currentStat, setCurrentStat] = useState(0)
   const [isSearching, setIsSearching] = useState(false)
   const [scrollY, setScrollY] = useState(0)
+  const [currentImage, setCurrentImage] = useState(0)
+  
+  // Images for the background carousel
+  const carouselImages = [bus1, bus2, metro1, train1]
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY)
@@ -47,9 +57,15 @@ export default function Home() {
       setCurrentStat((prev) => (prev + 1) % stats.length)
     }, 3000)
     
+    // Image carousel interval
+    const imageInterval = setInterval(() => {
+      setCurrentImage((prev) => (prev + 1) % carouselImages.length)
+    }, 5000) // Change image every 5 seconds
+    
     return () => {
       window.removeEventListener('scroll', handleScroll)
       clearInterval(statInterval)
+      clearInterval(imageInterval)
     }
   }, [])
 
@@ -68,11 +84,26 @@ export default function Home() {
     <div className="min-h-screen overflow-hidden">
       {/* Modern Hero Section */}
       <section className="relative section-spacing">
-        {/* Background Elements */}
+        {/* Background Image Carousel */}
         <div className="absolute inset-0 overflow-hidden">
+          {carouselImages.map((image, index) => (
+            <div 
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentImage ? '' : 'opacity-0'}`}
+              style={{
+                backgroundImage: `url(${image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: 'blur(1px)', // Reduced blur for better visibility
+                opacity: index === currentImage ? 0.9 : 0, // Increased opacity to 60% for better visibility
+              }}
+            />
+          ))}
+          
+          {/* Additional background elements */}
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-emerald-400/10 to-cyan-400/10 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-3xl"></div>
-          <div className="absolute inset-0 bg-[url('/src/assets/cityscape.svg')] bg-center bg-no-repeat bg-contain opacity-5"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-white/80 to-transparent dark:from-gray-900/80 backdrop-blur-sm"></div>
         </div>
         
         <div 
@@ -87,7 +118,7 @@ export default function Home() {
                 <br />
                 <span className="text-gradient">{translate('greenerCities')}</span>
               </h1>
-              <p className={`text-body max-w-3xl mx-auto ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              <p className="text-body max-w-3xl mx-auto text-white">
                 {translate('experienceFuture')}
               </p>
             </div>
