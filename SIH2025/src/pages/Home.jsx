@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
+import { useTheme } from '../context/ThemeContext'
 
 const features = [
   {
@@ -32,6 +33,7 @@ const stats = [
 
 export default function Home() {
   const { translate } = useLanguage()
+  const { darkMode } = useTheme()
   const [searchQuery, setSearchQuery] = useState('')
   const [currentStat, setCurrentStat] = useState(0)
   const [isSearching, setIsSearching] = useState(false)
@@ -81,27 +83,27 @@ export default function Home() {
             {/* Hero Text */}
             <div className="space-y-6 animate-fade-in-up">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                {translate('smarterCommutes')}
+                <span className={darkMode ? 'text-white' : 'text-gray-800'}>{translate('smarterCommutes')}</span>
                 <br />
                 <span className="text-gradient">{translate('greenerCities')}</span>
               </h1>
-              <p className="text-body max-w-3xl mx-auto text-gray-600">
+              <p className={`text-body max-w-3xl mx-auto ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 {translate('experienceFuture')}
               </p>
             </div>
 
             {/* Animated Stats Counter */}
             <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              <div className="glass rounded-3xl p-8 max-w-md mx-auto shadow-modern">
+              <div className={`${darkMode ? 'glass-dark' : 'glass'} rounded-3xl p-8 max-w-md mx-auto shadow-modern`}>
                 <div className="flex items-center justify-center gap-4">
                   <div className="text-4xl animate-pulse-modern">
                     {stats[currentStat].icon}
                   </div>
                   <div className="text-left">
-                    <div className="text-3xl font-bold text-gray-800">
+                    <div className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                       {stats[currentStat].number}
                     </div>
-                    <div className="text-sm text-gray-600 font-medium">
+                    <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'} font-medium`}>
                       {translate(stats[currentStat].label.replace(/\s+/g, ''))}
                     </div>
                   </div>
@@ -129,8 +131,8 @@ export default function Home() {
       <section className="section-spacing bg-soft">
         <div className="container-modern">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">{translate('whyChooseTransitTrack')}</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto">{translate('platformCombines')}</p>
+            <h2 className={`text-3xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>{translate('whyChooseTransitTrack')}</h2>
+            <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} max-w-3xl mx-auto`}>{translate('platformCombines')}</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -143,10 +145,10 @@ export default function Home() {
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 bg-gradient-to-br ${feature.gradient} text-white shadow-lg`}>
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-bold mb-2">{translate(feature.title === 'Real-Time Tracking' ? "Real-TimeTracking" : 
+                <h3 className={`text-xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>{translate(feature.title === 'Real-Time Tracking' ? "Real-TimeTracking" : 
                                                  feature.title === 'AI Crowd Prediction' ? "AICrowdPrediction" : 
                                                  "CarbonSavingsTracker")}</h3>
-                <p className="text-gray-600">{translate(feature.title === 'Real-Time Tracking' ? "Real-TimeTrackingDesc" : 
+                <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{translate(feature.title === 'Real-Time Tracking' ? "Real-TimeTrackingDesc" : 
                                                  feature.title === 'AI Crowd Prediction' ? "AICrowdPredictionDesc" : 
                                                  "CarbonSavingsTrackerDesc")}</p>
               </div>
@@ -163,10 +165,10 @@ export default function Home() {
             <div className="card-modern p-8 animate-fade-in-up">
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-bold mb-2">
+                  <h2 className={`text-2xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                     🔍 {translate('findYourBus')}
                   </h2>
-                  <p className="text-gray-600">
+                  <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     {translate('enterYourRoute')}
                   </p>
                 </div>
@@ -178,7 +180,7 @@ export default function Home() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder={translate('routeNumberPlaceholder')}
-                      className="input-modern text-lg"
+                      className={`input-modern text-lg ${darkMode ? 'bg-gray-800 text-white border-gray-700 placeholder-gray-400' : 'bg-white text-gray-800 border-gray-200 placeholder-gray-400'}`}
                     />
                     <div className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400">
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,10 +227,10 @@ export default function Home() {
             <div className="card-modern p-8 animate-slide-in-right">
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-section-title">
+                  <h2 className={`text-2xl md:text-3xl lg:text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                     📡 {translate('liveTransitMap')}
                   </h2>
-                  <p className="text-body">
+                  <p className={`text-base md:text-lg leading-relaxed ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                     {translate('realTimeVisualization')}
                   </p>
                 </div>
@@ -269,10 +271,10 @@ export default function Home() {
       <section className="section-spacing">
         <div className="container-modern">
           <div className="text-center mb-16">
-            <h2 className="text-section-title">
+            <h2 className={`text-2xl md:text-3xl lg:text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
               {translate('whyChooseTransitTrack')}
             </h2>
-            <p className="text-body max-w-2xl mx-auto">
+            <p className={`text-base md:text-lg leading-relaxed max-w-2xl mx-auto ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               {translate('advancedFeatures')}
             </p>
           </div>

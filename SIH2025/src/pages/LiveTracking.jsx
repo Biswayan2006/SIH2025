@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Popup, Polyline } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import { useLanguage } from '../context/LanguageContext'
 
 const sampleBuses = [
   { 
@@ -97,8 +96,6 @@ function crowdIcon(level) {
 }
 
 function BusMarker({ bus, isSelected, onClick }) {
-  const { translate } = useLanguage();
-  
   return (
     <CircleMarker
       center={[bus.lat, bus.lng]}
@@ -117,19 +114,19 @@ function BusMarker({ bus, isSelected, onClick }) {
         <div className="p-2 min-w-48">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-lg font-bold">{bus.id}</span>
-            <span className="status-indicator status-green text-xs">{translate('route')} {bus.route}</span>
+            <span className="status-indicator status-green text-xs">Route {bus.route}</span>
           </div>
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-600">{translate('nextStop')}:</span>
+              <span className="text-gray-600">Next Stop:</span>
               <span className="font-medium">{bus.nextStop}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">{translate('eta')}:</span>
+              <span className="text-gray-600">ETA:</span>
               <span className="font-medium text-emerald-600">{bus.eta}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">{translate('occupancy')}:</span>
+              <span className="text-gray-600">Occupancy:</span>
               <span className={`font-medium ${bus.crowd === 'low' ? 'text-green-600' : bus.crowd === 'medium' ? 'text-yellow-600' : 'text-red-600'}`}>
                 {Math.round((bus.occupancy / bus.capacity) * 100)}%
               </span>
@@ -142,7 +139,6 @@ function BusMarker({ bus, isSelected, onClick }) {
 }
 
 export default function LiveTracking() {
-  const { translate } = useLanguage()
   const [selectedBus, setSelectedBus] = useState(sampleBuses[0])
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   const [sidebarOpen, setSidebarOpen] = useState(false) // Mobile-first: closed by default
@@ -202,7 +198,7 @@ export default function LiveTracking() {
         <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 glass rounded-2xl px-6 py-3 shadow-glass border border-yellow-300">
           <div className="flex items-center gap-3 text-yellow-800">
             <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
-            <span className="font-medium">{translate('offlineMode')}</span>
+            <span className="font-medium">Offline Mode - Showing cached data</span>
           </div>
         </div>
       )}
@@ -213,14 +209,14 @@ export default function LiveTracking() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                🎯 {translate('liveBusTracking')}
+                🎯 Live Bus Tracking
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${isOnline ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                   <div className={`w-2 h-2 rounded-full mr-2 ${isOnline ? 'bg-green-500 animate-pulse-modern' : 'bg-yellow-500'}`}></div>
-                  {isOnline ? translate('live') : translate('offline')}
+                  {isOnline ? 'Live' : 'Offline'}
                 </span>
               </h1>
               <p className="text-gray-600 mt-2">
-                {translate('trackBusesDescription')}
+                Track buses in real-time with AI-powered crowd predictions
               </p>
             </div>
             
@@ -231,7 +227,7 @@ export default function LiveTracking() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={translate('searchRoutesStops')}
+                  placeholder="Search routes, stops..."
                   className="input-modern w-full sm:w-64 rounded-full pl-10"
                 />
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -247,10 +243,10 @@ export default function LiveTracking() {
                 onChange={(e) => setFilterCrowd(e.target.value)}
                 className="input-modern rounded-full px-4 py-2 border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300"
               >
-                <option value="all">{translate('allCrowds')}</option>
-                <option value="low">🟢 {translate('seatsAvailable')}</option>
-                <option value="medium">🟡 {translate('moderate')}</option>
-                <option value="high">🔴 {translate('crowded')}</option>
+                <option value="all">All Crowds</option>
+                <option value="low">🟢 Seats Available</option>
+                <option value="medium">🟡 Moderate</option>
+                <option value="high">🔴 Crowded</option>
               </select>
             </div>
           </div>
