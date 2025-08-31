@@ -14,7 +14,7 @@ function AppContent() {
       <LoadingProvider>
         <div className="min-h-dvh flex flex-col transition-colors duration-300">
           <Navbar />
-          <main id="main-content" className="flex-1">
+          <main id="main-content" className="flex-1 pt-16"> {/* Added pt-16 to prevent content from being hidden behind the fixed navbar */}
             <Outlet />
           </main>
           <Footer />
