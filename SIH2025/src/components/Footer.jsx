@@ -273,15 +273,10 @@ p.phone {
   font-size: 14px;
   color: #ccc;
 }
-  /* 🚫 Remove green outline/box on hover/focus */
-a, button, input {
-  outline: none;
-  box-shadow: none;
-}
-
-a:focus, button:focus, input:focus {
-  outline: none;
-  box-shadow: none;
+  /* Footer-specific focus styles */
+footer a:focus, footer button:focus, footer input:focus {
+  outline: 2px solid #ffcc00 !important;
+  outline-offset: 3px !important;
 }
 
 

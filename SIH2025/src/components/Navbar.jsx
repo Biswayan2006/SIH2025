@@ -7,8 +7,8 @@ import { useLanguage } from '../context/LanguageContext'
 function LanguageSelector() {
   const { language, setLanguage, translations } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useState(null)
 
-  
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
@@ -24,29 +24,63 @@ function LanguageSelector() {
     setIsOpen(false)
   }
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
+
+  // Handle keyboard navigation
+  const handleKeyDown = (event) => {
+    if (event.key === 'Escape') {
+      setIsOpen(false)
+    }
+  }
+
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef} onKeyDown={handleKeyDown}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-gray-800 dark:text-white hover:text-cyan-500 transition"
+        aria-haspopup="true"
+        aria-expanded={isOpen}
+        aria-label={`Select language: currently ${currentLang?.name}`}
       >
-        <span>{currentLang?.flag}</span>
+        <span aria-hidden="true">{currentLang?.flag}</span>
         <span className="hidden sm:inline">{currentLang?.name}</span>
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-44 bg-white dark:bg-[#1a1a2e] border border-cyan-400 rounded-xl shadow-lg z-50 overflow-hidden">
-          {languages.map(language => (
+        <div 
+          className="absolute right-0 mt-2 w-44 bg-white dark:bg-[#1a1a2e] border border-cyan-400 rounded-xl shadow-lg z-50 overflow-hidden"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="language-menu-button"
+        >
+          {languages.map((lang, index) => (
             <button
-              key={language.code}
-              onClick={() => handleSelect(language.code)}
+              key={lang.code}
+              onClick={() => handleSelect(lang.code)}
               className="w-full px-4 py-2 text-left flex items-center gap-3 text-gray-800 dark:text-white hover:text-cyan-500 transition"
+              role="menuitem"
+              tabIndex={0}
+              aria-current={lang.code === language ? 'true' : 'false'}
             >
-              <span>{language.flag}</span>
-              <span>{language.name}</span>
+              <span aria-hidden="true">{lang.flag}</span>
+              <span>{lang.name}</span>
             </button>
           ))}
         </div>
@@ -71,28 +105,86 @@ export default function Navbar() {
   const location = useLocation()
   const { translate } = useLanguage()
   const navItems = getNavItems(translate)
+  const menuRef = useState(null)
 
   useEffect(() => {
     setOpen(false)
   }, [location])
+  
+  // Handle keyboard navigation for the mobile menu
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && open) {
+        setOpen(false)
+      }
+    }
+    
+    // Focus trap inside modal when open
+    const handleTabKey = (e) => {
+      if (open && e.key === 'Tab') {
+        const focusableElements = menuRef.current?.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        
+        if (focusableElements?.length) {
+          const firstElement = focusableElements[0]
+          const lastElement = focusableElements[focusableElements.length - 1]
+          
+          if (e.shiftKey && document.activeElement === firstElement) {
+            lastElement.focus()
+            e.preventDefault()
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            firstElement.focus()
+            e.preventDefault()
+          }
+        }
+      }
+    }
+    
+    if (open) {
+      document.addEventListener('keydown', handleEscape)
+      document.addEventListener('keydown', handleTabKey)
+      
+      // Focus the first focusable element when menu opens
+      setTimeout(() => {
+        const closeButton = menuRef.current?.querySelector('button[aria-label="Close mobile menu"]')
+        if (closeButton) closeButton.focus()
+      }, 100)
+    }
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.removeEventListener('keydown', handleTabKey)
+    }
+  }, [open])
 
   const linkClass = ({ isActive }) =>
-    `relative font-medium px-3 py-1 transition
-     ${isActive ? 'text-cyan-500' : 'text-gray-800 dark:text-white hover:text-cyan-500'}`
+    `relative font-medium px-3 py-1 transition outline-none
+     ${isActive ? 'text-cyan-500' : 'text-gray-800 dark:text-white hover:text-cyan-500'}
+     focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e] rounded-md`
 
   const mobileClass = ({ isActive }) =>
-    `block text-lg py-2 text-center transition-colors
-     ${isActive ? 'text-cyan-500' : 'text-gray-800 dark:text-white hover:text-cyan-500'}`
+    `block text-lg py-2 text-center transition-colors outline-none
+     ${isActive ? 'text-cyan-500' : 'text-gray-800 dark:text-white hover:text-cyan-500'}
+     focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e] rounded-md`
 
   return (
     <>
+      {/* Skip to content link for keyboard users */}
+      <a 
+        href="#main-content" 
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-cyan-500 focus:text-white focus:rounded-md"
+      >
+        Skip to content
+      </a>
+      
       {/* Top Navbar */}
       <nav className="fixed top-0 w-full bg-[#F8F9FA]/70 dark:bg-[#1a1a2e]/90 backdrop-blur-md shadow-lg flex justify-between items-center px-4 py-2 z-50 transition">
         
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2" aria-label="TransitTrack Home">
           <img
-            src="/assets/image.png"
+            src="src/assets/image.png"
             alt="logo"
             className="h-12 w-12 rounded-full border-2 border-cyan-500 shadow-md"
           />
@@ -100,7 +192,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex gap-6 lg:gap-12 items-center">
+        <div className="hidden md:flex gap-6 lg:gap-12 items-center" role="navigation" aria-label="Main navigation">
           {navItems.map(item => (
             <NavLink key={item.to} to={item.to} end={item.to === '/'} className={linkClass}>
               {item.label}
@@ -112,7 +204,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 md:gap-3">
           <LanguageSelector />
           <ThemeToggle />
-          <NavLink to="/login" className="hidden sm:inline-block bg-cyan-500 hover:bg-cyan-600 text-white px-2 py-1 text-sm rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition">
+          <NavLink to="/login" className="hidden sm:inline-block bg-cyan-500 hover:bg-cyan-600 text-white px-2 py-1 text-sm rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e]">
             {translate('login')}
           </NavLink>
         </div>
@@ -122,8 +214,10 @@ export default function Navbar() {
           onClick={() => setOpen(!open)} 
           className="md:hidden flex items-center justify-center w-10 h-10 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           aria-label="Toggle mobile menu"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
         >
-          <div className="relative w-6 h-5 flex flex-col justify-between">
+          <div className="relative w-6 h-5 flex flex-col justify-between" aria-hidden="true">
             <span className={`absolute h-0.5 w-full bg-gray-800 dark:bg-white rounded-full transition-all duration-300 ${open ? 'rotate-45 top-2 bg-cyan-500' : 'top-0'}`} />
             <span className={`absolute h-0.5 w-full bg-gray-800 dark:bg-white rounded-full transition-all duration-300 ${open ? 'opacity-0' : 'top-2'}`} />
             <span className={`absolute h-0.5 w-full bg-gray-800 dark:bg-white rounded-full transition-all duration-300 ${open ? '-rotate-45 top-2 bg-cyan-500' : 'top-4'}`} />
@@ -138,14 +232,22 @@ export default function Navbar() {
       />
       
       {/* Mobile Menu */}
-      <div className={`fixed top-0 right-0 h-full w-72 bg-white dark:bg-[#1a1a2e] backdrop-blur-xl shadow-xl transform transition-transform duration-300 ease-in-out z-40 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div 
+        id="mobile-menu"
+        ref={menuRef}
+        className={`fixed top-0 right-0 h-full w-72 bg-white dark:bg-[#1a1a2e] backdrop-blur-xl shadow-xl transform transition-transform duration-300 ease-in-out z-40 ${open ? 'translate-x-0' : 'translate-x-full'}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobile navigation menu"
+      >
         <div className="flex flex-col mt-20 px-4">
           {/* Close button */}
           <button 
             onClick={() => setOpen(false)}
             className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Close mobile menu"
           >
-            <svg className="w-6 h-6 text-gray-800 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-6 h-6 text-gray-800 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
@@ -155,13 +257,13 @@ export default function Navbar() {
             <div className="w-20 h-20 bg-cyan-100 dark:bg-cyan-900 rounded-full flex items-center justify-center mb-2">
               <span className="text-3xl">👤</span>
             </div>
-            <NavLink to="/login" className="mt-2 bg-[#1B9AAA] hover:bg-cyan-600 text-white px-6 py-2 rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition">
+            <NavLink to="/login" className="mt-2 bg-[#1B9AAA] hover:bg-cyan-600 text-white px-6 py-2 rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e]">
               {translate('login')}
             </NavLink>
           </div>
           
           {/* Navigation items */}
-          <div className="flex flex-col space-y-1">
+          <div className="flex flex-col space-y-1" role="navigation" aria-label="Mobile navigation">
             {navItems.map(item => {
               // Define icons for each navigation item
               const getIcon = (path) => {
@@ -223,13 +325,12 @@ export default function Navbar() {
           </div>
           
           {/* Bottom section */}
-          <div className="mt-auto border-t border-gray-200 dark:border-gray-700 pt-4 flex flex-col items-center space-y-4">
-  <div className="flex items-center justify-center space-x-4">
-    <LanguageSelector />
-    <ThemeToggle />
-  </div>
-</div>
-
+          <div className="mt-auto border-t border-gray-200 dark:border-gray-700 pt-4 flex flex-col items-center space-y-4" aria-label="Language and theme settings">
+            <div className="flex items-center justify-center space-x-4">
+              <LanguageSelector />
+              <ThemeToggle />
+            </div>
+          </div>
         </div>
       </div>
     </>
