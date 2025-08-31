@@ -8,6 +8,7 @@ function LanguageSelector() {
   const { language, setLanguage, translations } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
 
+  
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
     { code: 'hi', name: 'हिन्दी', flag: '🇮🇳' },
@@ -125,7 +126,7 @@ export default function Navbar() {
           className="md:hidden flex flex-col justify-between w-8 h-6 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors p-2"
           aria-label="Toggle mobile menu"
         >
-          <span className={`h-1 w-full bg-gray-800 dark:bg-white rounded transition ${open ? 'rotate-45 translate-y-2 bg-cyan-500' : ''}`} />
+          <span className={`h-1 w-full bg-gray-800 dark:bg-white rounded transition ${open ? 'rotate-45 translate-y-2.5 bg-cyan-500' : ''}`} />
           <span className={`h-1 w-full bg-gray-800 dark:bg-white rounded transition ${open ? 'opacity-0' : ''}`} />
           <span className={`h-1 w-full bg-gray-800 dark:bg-white rounded transition ${open ? '-rotate-45 -translate-y-2 bg-cyan-500' : ''}`} />
         </button>
