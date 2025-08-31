@@ -139,18 +139,26 @@ export default function Feedback() {
   
   const StarRating = ({ rating: currentRating, onRate, readonly = false }) => {
     return (
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1" role="group" aria-label="Rating stars">
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
             type="button"
             onClick={() => !readonly && onRate(star)}
-            className={`text-2xl transition-colors ${
+            onKeyDown={(e) => {
+              if (!readonly && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                onRate(star);
+              }
+            }}
+            className={`text-2xl transition-colors outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-1 rounded-sm ${
               star <= currentRating 
                 ? 'text-yellow-400' 
                 : 'text-gray-300'
             } ${!readonly && 'hover:text-yellow-400 cursor-pointer'}`}
             disabled={readonly}
+            aria-label={`${star} star${star !== 1 ? 's' : ''}`}
+            aria-pressed={star <= currentRating}
           >
             ★
           </button>
@@ -185,7 +193,7 @@ export default function Feedback() {
         {/* Tabs */}
         <div className="bg-white rounded-lg shadow-sm mb-6">
           <div className="border-b border-gray-200">
-            <nav className="flex">
+            <nav className="flex" role="tablist" aria-label="Feedback tabs">
               {[
                 { id: 'submit', label: 'Submit Feedback', icon: '✍️' },
                 { id: 'community', label: 'Community Feedback', icon: '💬' },
@@ -194,13 +202,17 @@ export default function Feedback() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors ${
+                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium border-b-2 transition-colors outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 ${
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
+                  role="tab"
+                  aria-selected={activeTab === tab.id}
+                  aria-controls={`${tab.id}-panel`}
+                  id={`${tab.id}-tab`}
                 >
-                  <span>{tab.icon}</span>
+                  <span aria-hidden="true">{tab.icon}</span>
                   {tab.label}
                 </button>
               ))}
@@ -210,7 +222,12 @@ export default function Feedback() {
         
         {/* Submit Feedback Tab */}
         {activeTab === 'submit' && (
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div 
+            className="bg-white rounded-lg shadow-sm p-6" 
+            role="tabpanel" 
+            id="submit-panel" 
+            aria-labelledby="submit-tab"
+          >
             <h2 className="text-xl font-semibold text-gray-800 mb-6">Submit New Feedback</h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -225,11 +242,13 @@ export default function Feedback() {
                       key={type.value}
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, type: type.value }))}
-                      className={`p-4 border-2 rounded-lg text-left transition-all ${
+                      className={`p-4 border-2 rounded-lg text-left transition-all outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 ${
                         formData.type === type.value
                           ? 'border-blue-500 bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
+                      aria-pressed={formData.type === type.value}
+                      aria-label={`Select feedback type: ${type.label}`}
                     >
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">{type.icon}</span>
@@ -367,19 +386,26 @@ export default function Feedback() {
         
         {/* Community Feedback Tab */}
         {activeTab === 'community' && (
-          <div className="space-y-6">
+          <div 
+            className="space-y-6" 
+            role="tabpanel" 
+            id="community-panel" 
+            aria-labelledby="community-tab"
+          >
             {/* Filters */}
             <div className="bg-white rounded-lg shadow-sm p-4">
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" role="group" aria-label="Filter feedback by type">
                 <button
                   onClick={() => setFilterType('all')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 ${
                     filterType === 'all'
                       ? 'bg-blue-600 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
+                  aria-pressed={filterType === 'all'}
+                  aria-label="Show all feedback"
                 >
-                  All ({feedback.length})
+                  All Feedback
                 </button>
                 {feedbackTypes.map((type) => {
                   const count = feedback.filter(item => item.type === type.value).length
@@ -387,13 +413,15 @@ export default function Feedback() {
                     <button
                       key={type.value}
                       onClick={() => setFilterType(type.value)}
-                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 ${
                         filterType === type.value
                           ? 'bg-blue-600 text-white'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
+                      aria-pressed={filterType === type.value}
+                      aria-label={`Show ${type.label} feedback`}
                     >
-                      <span>{type.icon}</span>
+                      <span aria-hidden="true">{type.icon}</span>
                       {type.label} ({count})
                     </button>
                   )

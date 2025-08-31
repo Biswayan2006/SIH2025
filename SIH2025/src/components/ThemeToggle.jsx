@@ -3,11 +3,21 @@ import { useTheme } from '../context/ThemeContext';
 const ThemeToggle = () => {
   const { darkMode, toggleTheme } = useTheme();
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleTheme();
+    }
+  };
+
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+      onKeyDown={handleKeyDown}
+      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e]"
       aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+      role="switch"
+      aria-checked={darkMode}
     >
       {darkMode ? (
         // Sun icon for dark mode (switch to light)
@@ -17,6 +27,7 @@ const ThemeToggle = () => {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -33,6 +44,7 @@ const ThemeToggle = () => {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
