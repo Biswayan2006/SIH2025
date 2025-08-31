@@ -227,10 +227,10 @@ export default function Home() {
             <div className="card-modern p-8 animate-slide-in-right">
               <div className="space-y-6">
                 <div>
-                  <h2 className={`text-2xl md:text-3xl lg:text-4xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+                  <h2 className="text-section-title">
                     📡 {translate('liveTransitMap')}
                   </h2>
-                  <p className={`text-base md:text-lg leading-relaxed ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                  <p className="text-body">
                     {translate('realTimeVisualization')}
                   </p>
                 </div>
