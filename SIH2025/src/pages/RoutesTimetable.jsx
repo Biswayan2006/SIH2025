@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useTheme } from '../context/ThemeContext'
+import { useLanguage } from '../context/LanguageContext'
 
 const sampleRoutes = [
   {
@@ -215,15 +217,18 @@ export default function RoutePlanner() {
     }
   }
 
+  const { darkMode } = useTheme();
+  const { translate } = useLanguage();
+  
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-emerald-50">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-blue-50 to-emerald-50'}`}>
       <div className="container-modern section-spacing">
         {/* Hero Header */}
         <div className="text-center mb-12 pt-8">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-500 to-emerald-500">
             Smart Route Planner
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+          <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto text-lg`}>
             Plan your journey with <span className="text-blue-600 font-medium">AI-powered</span> predictions and <span className="text-emerald-500 font-medium">eco-friendly</span> route options
           </p>
         </div>
@@ -237,7 +242,7 @@ export default function RoutePlanner() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               ref={searchRef}
-              className="w-full py-4 px-6 bg-white rounded-full shadow-lg border-2 border-transparent focus:border-blue-500 transition-all duration-300 text-gray-700 placeholder-gray-400 outline-none"
+              className={`w-full py-4 px-6 ${darkMode ? 'bg-gray-800 text-white placeholder-gray-400' : 'bg-white text-gray-700 placeholder-gray-400'} rounded-full shadow-lg border-2 border-transparent focus:border-blue-500 transition-all duration-300 outline-none`}
             />
             <button 
               className="absolute right-2 p-3 bg-gradient-to-r from-blue-600 to-emerald-500 rounded-full text-white hover:shadow-lg transform hover:scale-105 transition-all duration-300"
@@ -262,8 +267,8 @@ export default function RoutePlanner() {
 
         {/* Smart Schedule */}
         {showSmartSchedule && (
-          <div className="mb-12 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300">
-            <h2 className="text-2xl font-bold mb-6 text-center">Smart Schedule for {selectedDay}</h2>
+          <div className={`mb-12 ${darkMode ? 'bg-gray-800/90 text-white' : 'bg-white/90'} backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300`}>
+            <h2 className={`text-2xl font-bold mb-6 text-center ${darkMode ? 'text-white' : 'text-gray-800'}`}>Smart Schedule for {selectedDay}</h2>
             
             {/* Day Selector */}
             <div className="flex justify-center gap-2 mb-8 overflow-x-auto pb-2">
@@ -285,15 +290,15 @@ export default function RoutePlanner() {
             {/* Time Slots */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Morning */}
-              <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                <h3 className="font-medium text-blue-800 mb-3 flex items-center gap-2">
+              <div className={`${darkMode ? 'bg-blue-900/30 border-blue-800' : 'bg-blue-50 border-blue-100'} rounded-xl p-4 border`}>
+                <h3 className={`font-medium ${darkMode ? 'text-blue-300' : 'text-blue-800'} mb-3 flex items-center gap-2`}>
                   <span>☀️</span> Morning (6AM - 11AM)
                 </h3>
                 <div className="space-y-2">
                   {getScheduleForDay(selectedDay).morning.map((route, idx) => (
-                    <div key={idx} className="bg-white rounded-lg p-3 shadow-sm">
+                    <div key={idx} className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white'} rounded-lg p-3 shadow-sm`}>
                       <div className="font-medium">{route.name}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                         {route.from} → {route.to}
                       </div>
                     </div>
@@ -302,15 +307,15 @@ export default function RoutePlanner() {
               </div>
               
               {/* Afternoon */}
-              <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-100">
-                <h3 className="font-medium text-yellow-800 mb-3 flex items-center gap-2">
+              <div className={`${darkMode ? 'bg-yellow-900/30 border-yellow-800' : 'bg-yellow-50 border-yellow-100'} rounded-xl p-4 border`}>
+                <h3 className={`font-medium ${darkMode ? 'text-yellow-300' : 'text-yellow-800'} mb-3 flex items-center gap-2`}>
                   <span>🌤️</span> Afternoon (11AM - 4PM)
                 </h3>
                 <div className="space-y-2">
                   {getScheduleForDay(selectedDay).afternoon.map((route, idx) => (
-                    <div key={idx} className="bg-white rounded-lg p-3 shadow-sm">
+                    <div key={idx} className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white'} rounded-lg p-3 shadow-sm`}>
                       <div className="font-medium">{route.name}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                         {route.from} → {route.to}
                       </div>
                     </div>
@@ -319,15 +324,15 @@ export default function RoutePlanner() {
               </div>
               
               {/* Evening */}
-              <div className="bg-orange-50 rounded-xl p-4 border border-orange-100">
-                <h3 className="font-medium text-orange-800 mb-3 flex items-center gap-2">
+              <div className={`${darkMode ? 'bg-orange-900/30 border-orange-800' : 'bg-orange-50 border-orange-100'} rounded-xl p-4 border`}>
+                <h3 className={`font-medium ${darkMode ? 'text-orange-300' : 'text-orange-800'} mb-3 flex items-center gap-2`}>
                   <span>🌆</span> Evening (4PM - 8PM)
                 </h3>
                 <div className="space-y-2">
                   {getScheduleForDay(selectedDay).evening.map((route, idx) => (
-                    <div key={idx} className="bg-white rounded-lg p-3 shadow-sm">
+                    <div key={idx} className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white'} rounded-lg p-3 shadow-sm`}>
                       <div className="font-medium">{route.name}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                         {route.from} → {route.to}
                       </div>
                     </div>
@@ -336,15 +341,15 @@ export default function RoutePlanner() {
               </div>
               
               {/* Night */}
-              <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-100">
-                <h3 className="font-medium text-indigo-800 mb-3 flex items-center gap-2">
+              <div className={`${darkMode ? 'bg-indigo-900/30 border-indigo-800' : 'bg-indigo-50 border-indigo-100'} rounded-xl p-4 border`}>
+                <h3 className={`font-medium ${darkMode ? 'text-indigo-300' : 'text-indigo-800'} mb-3 flex items-center gap-2`}>
                   <span>🌙</span> Night (8PM - 6AM)
                 </h3>
                 <div className="space-y-2">
                   {getScheduleForDay(selectedDay).night && getScheduleForDay(selectedDay).night.map((route, idx) => (
-                    <div key={idx} className="bg-white rounded-lg p-3 shadow-sm">
+                    <div key={idx} className={`${darkMode ? 'bg-gray-700 text-white' : 'bg-white'} rounded-lg p-3 shadow-sm`}>
                       <div className="font-medium">{route.name}</div>
-                      <div className="text-sm text-gray-500">
+                      <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-500'}`}>
                         {route.from} → {route.to}
                       </div>
                     </div>
@@ -543,7 +548,7 @@ export default function RoutePlanner() {
             {filteredRoutes.map((route, index) => (
               <div
                 key={index}
-                className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300"
+                className={`${darkMode ? 'bg-gray-800/90' : 'bg-white/90'} backdrop-blur-sm rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300`}
               >
                 <div className="bg-gradient-to-r from-blue-600 to-emerald-500 p-4 text-white">
                   <div className="flex justify-between items-center">
@@ -575,15 +580,15 @@ export default function RoutePlanner() {
                   
                   <div className="flex justify-between mb-4">
                     <div>
-                      <div className="text-sm text-gray-500">Fare</div>
+                      <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Fare</div>
                       <div className="font-medium">{route.fare}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500">Frequency</div>
+                      <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Frequency</div>
                       <div className="font-medium">{route.frequency}</div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-500">Next</div>
+                      <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Next</div>
                       <div className="font-medium">{route.nextDeparture}</div>
                     </div>
                   </div>
@@ -611,7 +616,7 @@ export default function RoutePlanner() {
                     {route.features && route.features.map((feature, idx) => (
                       <span 
                         key={idx}
-                        className="text-xs px-2 py-1 bg-gray-100 rounded-full"
+                        className={`text-xs px-2 py-1 ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100'} rounded-full`}
                       >
                         {feature}
                       </span>
