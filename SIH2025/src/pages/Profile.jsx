@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import PageFadeIn from '../components/PageFadeIn'
 
 const sampleUser = {
   name: 'Alex Johnson',
@@ -102,7 +103,8 @@ export default function Profile() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-secondary">
+    <PageFadeIn>
+      <div className="min-h-screen bg-gradient-secondary">
       <div className="container-modern section-spacing">
         {/* Profile Header */}
         <div className="card-modern p-8 mb-8 animate-fade-in-up">
@@ -390,6 +392,7 @@ export default function Profile() {
         {/* Mobile Bottom Spacing */}
         <div className="sm:hidden h-20"></div>
       </div>
-    </div>
+      </div>
+    </PageFadeIn>
   )
 }

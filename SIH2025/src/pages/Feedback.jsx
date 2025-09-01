@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import PageFadeIn from '../components/PageFadeIn'
 
 const sampleFeedback = [
   {
@@ -168,7 +169,8 @@ export default function Feedback() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <PageFadeIn>
+      <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-6">
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -550,5 +552,6 @@ export default function Feedback() {
         )}
       </div>
     </div>
+    </PageFadeIn>
   )
 }
