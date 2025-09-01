@@ -5,9 +5,16 @@ import { ThemeProvider } from './context/ThemeContext'
 import { LanguageProvider, useLanguage } from './context/LanguageContext'
 import { LoadingProvider } from './context/LoadingContext'
 import './App.css'
+import SplashScreen from './components/SplashScreen';
+import { useState } from 'react';
 
 function AppContent() {
   const { translate } = useLanguage();
+  const [showSplash, setShowSplash] = useState(true);
+
+  if (showSplash) {
+    return <SplashScreen onFinished={() => setShowSplash(false)} />;
+  }
   
   return (
     <ThemeProvider>
