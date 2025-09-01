@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import PageFadeIn from '../components/PageFadeIn'
 
 export default function GreenScore() {
   const [selectedPeriod, setSelectedPeriod] = useState('month')
@@ -113,7 +114,8 @@ export default function GreenScore() {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-secondary">
+    <PageFadeIn>
+      <div className="min-h-screen bg-gradient-secondary">
       <div className="container-modern section-spacing">
         {/* Hero Header */}
         <div className="text-center mb-12 animate-fade-in-up">
@@ -126,7 +128,7 @@ export default function GreenScore() {
             Track your environmental impact, compete with the community, and make every journey count
           </p>
         </div>
-
+     
         {/* Level Badge Card */}
         <div className="card-modern p-8 mb-8 text-center animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-6">
@@ -136,7 +138,7 @@ export default function GreenScore() {
                 <div className="text-sm opacity-90">{currentLevel.name}</div>
               </div>
             </div>
-            
+         
             {/* Progress to Next Level */}
             {nextLevel && (
               <div className="flex-1 max-w-md">
@@ -475,6 +477,7 @@ export default function GreenScore() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </PageFadeIn>
   )
 }

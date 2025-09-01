@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
+import PageFadeIn from '../components/PageFadeIn';
 
 // Toggle Switch Component
 const ToggleSwitch = ({ checked, onChange, disabled = false }) => {
@@ -367,7 +370,8 @@ export default function Accessibility() {
   const subtextClass = settings.highContrast ? 'text-gray-300' : 'text-gray-600'
   
   return (
-    <div className={containerClass}>
+    <PageFadeIn>
+      <div className={containerClass}>
       {/* Emergency Modal */}
       {showEmergencyModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -478,7 +482,6 @@ export default function Accessibility() {
           </div>
         </div>
       )}
-      
       <div className="max-w-4xl mx-auto px-4 py-6">
         {/* Header */}
         <div className={cardClass + ' mb-6'}>
@@ -1005,6 +1008,7 @@ export default function Accessibility() {
           </div>
         </CollapsibleSection>
       </div>
-    </div>
+      </div>
+    </PageFadeIn>
   )
 }
