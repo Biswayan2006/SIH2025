@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react'
+import { useTheme } from '../context/ThemeContext';
+import { useLanguage } from '../context/LanguageContext';
+import PageFadeIn from '../components/PageFadeIn';
 
 export default function Accessibility() {
   const [settings, setSettings] = useState({
@@ -122,7 +125,8 @@ export default function Accessibility() {
   const subtextClass = settings.highContrast ? 'text-gray-300' : 'text-gray-600'
   
   return (
-    <div className={containerClass}>
+    <PageFadeIn>
+      <div className={containerClass}>
       <div className="max-w-4xl mx-auto px-4 py-6">
         {/* Header */}
         <div className={cardClass + ' mb-6'}>
@@ -385,6 +389,7 @@ export default function Accessibility() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </PageFadeIn>
   )
 }

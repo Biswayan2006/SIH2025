@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import PageFadeIn from '../components/PageFadeIn'
 
 const sampleRoutes = [
   {
@@ -216,7 +217,8 @@ export default function RoutePlanner() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-emerald-50">
+    <PageFadeIn>
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-emerald-50">
       <div className="container-modern section-spacing">
         {/* Hero Header */}
         <div className="text-center mb-12 pt-8">
@@ -630,5 +632,6 @@ export default function RoutePlanner() {
         </div>
       </div>
     </div>
+    </PageFadeIn>
   )
 }
