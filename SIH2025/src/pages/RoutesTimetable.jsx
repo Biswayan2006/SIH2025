@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useTheme } from '../context/ThemeContext'
 import { useLanguage } from '../context/LanguageContext'
+import PageFadeIn from '../components/PageFadeIn'
 
 const sampleRoutes = [
   {
@@ -219,9 +220,10 @@ export default function RoutePlanner() {
 
   const { darkMode } = useTheme();
   const { translate } = useLanguage();
-  
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-blue-50 to-emerald-50'}`}>
+    <PageFadeIn>
+      <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-blue-50 to-emerald-50'}`}>
+        <div className="container-modern section-spacing">
       <div className="container-modern section-spacing">
         {/* Hero Header */}
         <div className="text-center mb-12 pt-8">
@@ -634,7 +636,8 @@ export default function RoutePlanner() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+      </div>
     </PageFadeIn>
   )
-}
+  }
