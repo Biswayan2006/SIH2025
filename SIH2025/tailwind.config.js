@@ -86,9 +86,8 @@ export default {
           '50%': { opacity: '0.8', transform: 'scale(1.05)' },
         },
         busMoveAnimation: {
-          '0%': { transform: 'translateX(-5px)' },
-          '50%': { transform: 'translateX(5px)' },
-          '100%': { transform: 'translateX(-5px)' },
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(150vw)' },
         },
         wheelSpinAnimation: {
           '0%': { transform: 'rotate(0deg)' },
