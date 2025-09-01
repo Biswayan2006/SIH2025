@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Popup, Polyline } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useLanguage } from '../context/LanguageContext'
+import PageFadeIn from '../components/PageFadeIn'
 
 const sampleBuses = [
   { 
@@ -195,7 +196,8 @@ export default function LiveTracking() {
   const filteredBuses = filterCrowd === 'all' ? buses : buses.filter(bus => bus.crowd === filterCrowd)
   
   return (
-    <div className="pb-0 min-h-0 pl-0 ml-0 w-screen pt-20">
+    <PageFadeIn>
+      <div className="pb-0 min-h-0 pl-0 ml-0 w-screen pt-20">
       {/* Status Banner */}
       {!isOnline && (
         <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 glass rounded-2xl px-6 py-3 shadow-glass border border-yellow-300">
@@ -437,6 +439,7 @@ export default function LiveTracking() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </PageFadeIn>
   )
 }
