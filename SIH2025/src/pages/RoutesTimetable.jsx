@@ -639,5 +639,6 @@ export default function RoutePlanner() {
       </div>
       </div>
     </PageFadeIn>
-  )
-  }
+
+  );
+};
