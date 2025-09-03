@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import PageFadeIn from '../components/PageFadeIn'
-import { useLanguage } from '../context/LanguageContext'
 
 const sampleFeedback = [
   {
@@ -46,7 +45,6 @@ const sampleFeedback = [
 ]
 
 export default function Feedback() {
-  const { translate } = useLanguage()
   const [activeTab, setActiveTab] = useState('submit')
   const [formData, setFormData] = useState({
     type: 'issue',
@@ -64,16 +62,16 @@ export default function Feedback() {
   const [rating, setRating] = useState(0)
   
   const feedbackTypes = [
-    { value: 'issue', label: translate('reportIssue'), icon: '⚠️', color: 'text-red-600' },
-    { value: 'suggestion', label: translate('suggestRoute'), icon: '💡', color: 'text-blue-600' },
-    { value: 'rating', label: translate('rateBus'), icon: '⭐', color: 'text-yellow-600' },
-    { value: 'compliment', label: translate('giveCompliment'), icon: '😊', color: 'text-green-600' }
+    { value: 'issue', label: 'Report an Issue', icon: '⚠️', color: 'text-red-600' },
+    { value: 'suggestion', label: 'Suggest a Route', icon: '💡', color: 'text-blue-600' },
+    { value: 'rating', label: 'Rate a Bus', icon: '⭐', color: 'text-yellow-600' },
+    { value: 'compliment', label: 'Give Compliment', icon: '😊', color: 'text-green-600' }
   ]
   
   const priorityLevels = [
-    { value: 'low', label: translate('low') || 'Low', color: 'bg-green-100 text-green-800' },
-    { value: 'medium', label: translate('medium') || 'Medium', color: 'bg-yellow-100 text-yellow-800' },
-    { value: 'high', label: translate('high') || 'High', color: 'bg-red-100 text-red-800' }
+    { value: 'low', label: 'Low', color: 'bg-green-100 text-green-800' },
+    { value: 'medium', label: 'Medium', color: 'bg-yellow-100 text-yellow-800' },
+    { value: 'high', label: 'High', color: 'bg-red-100 text-red-800' }
   ]
   
   const statusColors = {
@@ -177,10 +175,10 @@ export default function Feedback() {
         {/* Header */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
-            💬 {translate('communityFeedback') || 'Community Feedback'}
+            💬 Community Feedback
           </h1>
           <p className="text-gray-600 mt-1">
-            {translate('helpImproveTransit') || 'Help improve public transit by sharing your experiences and suggestions'}
+            Help improve public transit by sharing your experiences and suggestions
           </p>
         </div>
         
@@ -190,7 +188,7 @@ export default function Feedback() {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
-            <span>{translate('feedbackSubmitted') || 'Thank you! Your feedback has been submitted successfully.'}</span>
+            <span>Thank you! Your feedback has been submitted successfully.</span>
           </div>
         )}
         
@@ -199,9 +197,9 @@ export default function Feedback() {
           <div className="border-b border-gray-200">
             <nav className="flex" role="tablist" aria-label="Feedback tabs">
               {[
-                { id: 'submit', label: translate('submitFeedback'), icon: '✍️' },
-                { id: 'community', label: translate('viewFeedback'), icon: '💬' },
-                { id: 'my-feedback', label: translate('mySubmissions') || 'My Submissions', icon: '📄' }
+                { id: 'submit', label: 'Submit Feedback', icon: '✍️' },
+                { id: 'community', label: 'Community Feedback', icon: '💬' },
+                { id: 'my-feedback', label: 'My Submissions', icon: '📄' }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -232,13 +230,13 @@ export default function Feedback() {
             id="submit-panel" 
             aria-labelledby="submit-tab"
           >
-            <h2 className="text-xl font-semibold text-gray-800 mb-6">{translate('submitNewFeedback') || 'Submit New Feedback'}</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-6">Submit New Feedback</h2>
             
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Feedback Type */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  {translate('feedbackTypeQuestion') || 'What type of feedback would you like to submit?'}
+                  What type of feedback would you like to submit?
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                   {feedbackTypes.map((type) => (

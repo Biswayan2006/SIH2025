@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import PageFadeIn from '../components/PageFadeIn'
-import { useLanguage } from '../context/LanguageContext'
 
 const sampleUser = {
   name: 'Alex Johnson',
