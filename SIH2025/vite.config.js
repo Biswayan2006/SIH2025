@@ -7,5 +7,12 @@ export default defineConfig({
   server: {
     port: 5174,
     hmr: { overlay: true },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4001',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 })
