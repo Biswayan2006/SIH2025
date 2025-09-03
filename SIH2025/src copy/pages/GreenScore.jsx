@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
 import PageFadeIn from '../components/PageFadeIn'
-import { useLanguage } from '../context/LanguageContext'
 
 export default function GreenScore() {
-  const { translate } = useLanguage()
   const [selectedPeriod, setSelectedPeriod] = useState('month')
   const [userLevel, setUserLevel] = useState(3)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
@@ -194,16 +192,16 @@ export default function GreenScore() {
                 🌍
               </div>
               <div className="text-right">
-                <div className="text-sm text-gray-500">{translate('co2Saved')}</div>
+                <div className="text-sm text-gray-500">CO₂ Saved</div>
                 <div className="text-3xl font-bold text-emerald-600">
                   <AnimatedCounter value={userStats[selectedPeriod].co2Saved} suffix=" kg" />
                 </div>
               </div>
             </div>
             <div className="text-sm text-gray-600">
-              {translate('equivalentTo')} <span className="font-semibold text-emerald-600">
-                <AnimatedCounter value={userStats[selectedPeriod].treesEquivalent} /> {translate('treesEquivalent')}
-              </span>
+              Equivalent to <span className="font-semibold text-emerald-600">
+                <AnimatedCounter value={userStats[selectedPeriod].treesEquivalent} /> trees
+              </span> planted
             </div>
           </div>
           
@@ -213,7 +211,7 @@ export default function GreenScore() {
                 🚌
               </div>
               <div className="text-right">
-                <div className="text-sm text-gray-500">{translate('tripsTaken')}</div>
+                <div className="text-sm text-gray-500">Trips Taken</div>
                 <div className="text-3xl font-bold text-blue-600">
                   <AnimatedCounter value={userStats[selectedPeriod].trips} />
                 </div>
@@ -222,7 +220,7 @@ export default function GreenScore() {
             <div className="text-sm text-gray-600">
               <span className="font-semibold text-blue-600">
                 {formatNumber(userStats[selectedPeriod].distance)}
-              </span> {translate('kmTraveled')}
+              </span> km traveled
             </div>
           </div>
           
@@ -232,14 +230,14 @@ export default function GreenScore() {
                 💰
               </div>
               <div className="text-right">
-                <div className="text-sm text-gray-500">{translate('moneySaved')}</div>
+                <div className="text-sm text-gray-500">Money Saved</div>
                 <div className="text-3xl font-bold text-purple-600">
                   ₹<AnimatedCounter value={userStats[selectedPeriod].moneySaved} />
                 </div>
               </div>
             </div>
             <div className="text-sm text-gray-600">
-              {translate('comparedToPrivateTransport')}
+              Compared to using private transport
             </div>
           </div>
           

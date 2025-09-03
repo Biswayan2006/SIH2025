@@ -143,7 +143,6 @@ function BusMarker({ bus, isSelected, onClick }) {
 }
 
 export default function LiveTracking() {
-  const { translate } = useLanguage()
   const [selectedBus, setSelectedBus] = useState(sampleBuses[0])
   const [isOnline, setIsOnline] = useState(navigator.onLine)
   const [sidebarOpen, setSidebarOpen] = useState(false) // Mobile-first: closed by default
@@ -204,7 +203,7 @@ export default function LiveTracking() {
         <div className="fixed top-24 left-1/2 transform -translate-x-1/2 z-50 glass rounded-2xl px-6 py-3 shadow-glass border border-yellow-300">
           <div className="flex items-center gap-3 text-yellow-800">
             <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
-            <span className="font-medium">{translate('offlineMode')}</span>
+            <span className="font-medium">Offline Mode - Showing cached data</span>
           </div>
         </div>
       )}
@@ -215,14 +214,14 @@ export default function LiveTracking() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                🎯 {translate('liveBusTracking')}
+                🎯 Live Bus Tracking
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${isOnline ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                   <div className={`w-2 h-2 rounded-full mr-2 ${isOnline ? 'bg-green-500 animate-pulse-modern' : 'bg-yellow-500'}`}></div>
-                  {isOnline ? translate('live') : translate('offline')}
+                  {isOnline ? 'Live' : 'Offline'}
                 </span>
               </h1>
               <p className="text-gray-600 mt-2">
-                {translate('trackBusesDescription')}
+                Track buses in real-time with AI-powered crowd predictions
               </p>
             </div>
             
@@ -233,7 +232,7 @@ export default function LiveTracking() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={translate('searchRoutesStops')}
+                  placeholder="Search routes, stops..."
                   className="input-modern w-full sm:w-64 rounded-full pl-10"
                 />
                 <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
