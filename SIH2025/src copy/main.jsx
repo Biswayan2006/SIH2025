@@ -33,12 +33,8 @@ const router = createBrowserRouter([
   },
 ])
 
-import { LanguageProvider } from './context/LanguageContext'
-
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <LanguageProvider>
-      <RouterProvider router={router} />
-    </LanguageProvider>
+    <RouterProvider router={router} />
   </StrictMode>,
 )
