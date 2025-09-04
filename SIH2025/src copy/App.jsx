@@ -36,7 +36,9 @@ function AppContent() {
 
 function App() {
   return (
-    <AppContent />
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   )
 }
 
