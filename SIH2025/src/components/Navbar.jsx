@@ -204,7 +204,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 md:gap-3">
           <LanguageSelector />
           <ThemeToggle />
-          <NavLink to="/login" className="hidden sm:inline-block bg-cyan-500 hover:bg-cyan-600 text-white px-2 py-1 text-sm rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition-all duration-200 transform hover:-translate-y-0.5 outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e] focus:-translate-y-0.5">
+          <NavLink to="/login" className="hidden sm:inline-block bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-1 text-sm rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition-all duration-200 transform hover:-translate-y-0.5 outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e] focus:-translate-y-0.5">
             {translate('login')}
           </NavLink>
         </div>

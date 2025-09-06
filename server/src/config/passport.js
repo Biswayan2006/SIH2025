@@ -61,7 +61,8 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/api/auth/google/callback',
+    callbackURL: 'http://localhost:4001/api/auth/google/callback',
+    scope: ['profile', 'email'],
     proxy: true,
     passReqToCallback: true
   }, async (req, accessToken, refreshToken, profile, done) => {
@@ -176,13 +177,14 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 
 // Generate JWT token for user
 const generateToken = (user) => {
+  const secret = process.env.JWT_SECRET || 'default-secret-for-development-only-do-not-use-in-production';
   return jwt.sign(
     { 
       userId: user.userId, 
       email: user.email, 
       name: user.name 
     },
-    process.env.JWT_SECRET,
+    secret,
     { expiresIn: '7d' }
   )
 }
@@ -199,7 +201,8 @@ const verifyToken = (req, res, next) => {
   }
   
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    const secret = process.env.JWT_SECRET || 'default-secret-for-development-only-do-not-use-in-production';
+    const decoded = jwt.verify(token, secret)
     req.user = decoded
     next()
   } catch (error) {

@@ -1,15 +1,4 @@
 import { useState, useEffect } from 'react';
-import { db, auth } from '../firebase';
-import {
-  collection,
-  addDoc,
-  onSnapshot,
-  query,
-  orderBy,
-  updateDoc,
-  doc,
-  serverTimestamp
-} from 'firebase/firestore';
 import PageFadeIn from '../components/PageFadeIn';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -32,48 +21,34 @@ export default function Feedback() {
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [rating, setRating] = useState(0);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({ displayName: 'Guest User', email: 'guest@example.com' });
   const [isServiceAvailable, setIsServiceAvailable] = useState(true);
 
+  // Load feedback from backend
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      setUser(user);
-      // If no user is authenticated, set a mock user for testing
-      if (!user) {
-        setUser({ displayName: 'Test User', email: 'test@example.com' });
-      }
-    });
-    return unsubscribe;
+    loadFeedback();
   }, []);
 
-  useEffect(() => {
+  const loadFeedback = async () => {
     try {
-      const q = query(collection(db, 'feedbacks'), orderBy('timestamp', 'desc'));
-      const unsubscribe = onSnapshot(q, {
-        next: (snapshot) => {
-          const feedbackData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          setFeedback(feedbackData);
-          setIsServiceAvailable(true);
-          setShowError(false);
-        },
-        error: (error) => {
-          console.error('Firestore error:', error);
-          setIsServiceAvailable(false);
-          setShowError(true);
-          setErrorMessage('Service is currently unavailable. Please try again later.');
-          // Use mock data when Firebase is unavailable
-          setFeedback([]);
-        }
-      });
-      return unsubscribe;
+      const response = await fetch('http://localhost:4001/api/feedback');
+      if (response.ok) {
+        const data = await response.json();
+        setFeedback(data.feedback || []);
+        setIsServiceAvailable(true);
+        setShowError(false);
+      } else {
+        throw new Error('Failed to load feedback');
+      }
     } catch (error) {
-      console.error('Failed to initialize Firestore:', error);
+      console.error('Error loading feedback:', error);
       setIsServiceAvailable(false);
-      // Use mock data when Firebase is unavailable
+      setShowError(true);
+      setErrorMessage('Service is currently unavailable. Please try again later.');
+      // Use mock data when backend is unavailable
       setFeedback([]);
-      return () => {};
     }
-  }, []);
+  };
 
   const feedbackTypes = [
     { value: 'issue', label: translate('reportIssue'), icon: '⚠', color: 'text-red-600' },
@@ -110,24 +85,28 @@ export default function Feedback() {
     try {
       const feedbackData = {
         ...formData,
-        rating: formData.type === 'rating' ? rating : 0,   // ✅ use 0 instead of null
+        rating: formData.type === 'rating' ? rating : 0,
         upvotes: 0,
         status: 'submitted',
-        timestamp: serverTimestamp(),
+        timestamp: new Date().toISOString(),
         author: formData.anonymous ? 'Anonymous' : user ? user.displayName || user.email : 'User'
       };
 
-      if (isServiceAvailable) {
-        try {
-          await addDoc(collection(db, 'feedbacks'), feedbackData);
-        } catch (error) {
-          console.error('Error adding document to Firestore:', error);
-          // Continue with mock submission if Firestore fails
-          console.log('Submitting feedback (mock):', formData);
-        }
+      const response = await fetch('http://localhost:4001/api/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(feedbackData)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Feedback submitted successfully:', result);
+        // Reload feedback list
+        loadFeedback();
       } else {
-        // Mock submission when Firebase is unavailable
-        console.log('Submitting feedback (mock):', formData);
+        throw new Error('Failed to submit feedback');
       }
 
       setFormData({
@@ -164,21 +143,19 @@ export default function Feedback() {
     }
 
     try {
-      if (isServiceAvailable) {
-        try {
-          const feedbackRef = doc(db, 'feedbacks', id);
-          const currentFeedback = feedback.find(item => item.id === id);
-          await updateDoc(feedbackRef, {
-            upvotes: (currentFeedback.upvotes || 0) + 1
-          });
-        } catch (error) {
-          console.error('Error updating upvotes in Firestore:', error);
-          // Continue with mock upvote if Firestore fails
-          console.log('Upvoting feedback (mock):', id);
+      const response = await fetch(`http://localhost:4001/api/feedback/${id}/upvote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         }
+      });
+
+      if (response.ok) {
+        console.log('Feedback upvoted successfully');
+        // Reload feedback list
+        loadFeedback();
       } else {
-        // Mock upvote when Firebase is unavailable
-        console.log('Upvoting feedback (mock):', id);
+        throw new Error('Failed to upvote feedback');
       }
       
       setShowError(false);
@@ -194,8 +171,9 @@ export default function Feedback() {
   const mySubmissions = user ? feedback.filter(item => item.author === (user.displayName || user.email)) : [];
 
 const getTimeAgo = timestamp => {
-  if (!timestamp || !timestamp.toDate) return 'Just now';
-  const diff = Date.now() - timestamp.toDate().getTime();
+  if (!timestamp) return 'Just now';
+  const date = new Date(timestamp);
+  const diff = Date.now() - date.getTime();
   const hours = Math.floor(diff / (1000 * 60 * 60));
   if (hours < 1) return 'Just now';
   if (hours < 24) return `${hours}h ago`;

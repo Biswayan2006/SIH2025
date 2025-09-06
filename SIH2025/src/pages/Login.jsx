@@ -4,11 +4,13 @@ import { motion } from "framer-motion";
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLoading } from '../context/LoadingContext';
+import { useAuth } from '../context/AuthContext';
 import AuthBackground from '../components/AuthBackground';
 
 const Login = () => {
   const { translate } = useLanguage();
   const { darkMode } = useTheme();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { setLoading } = useLoading();
@@ -54,12 +56,36 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    if (formData.email && formData.password) {
-      navigate("/admin");
+    
+    try {
+      const response = await fetch('http://localhost:4001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        // Login the user
+        login(data.user, data.token);
+        navigate('/');
+      } else {
+        setError(data.message || 'Login failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      setError('Network error. Please check your connection and try again.');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleInputChange = (e) => {
@@ -169,6 +195,13 @@ const Login = () => {
               </Link>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className={`mb-4 p-3 rounded-lg ${darkMode ? 'bg-red-900/30 border-red-800 text-red-400' : 'bg-red-100 border-red-200 text-red-700'} border`}>
+                {error}
+              </div>
+            )}
+
             {/* Login Button */}
             <motion.button
               type="submit"
@@ -197,13 +230,6 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Error Message */}
-            {error && (
-              <div className={`mb-4 p-3 rounded-lg ${darkMode ? 'bg-red-900/30 border-red-800 text-red-400' : 'bg-red-100 border-red-200 text-red-700'} border`}>
-                {error}
-              </div>
-            )}
-            
             {/* Google Login Button */}
             <motion.button
               type="button"

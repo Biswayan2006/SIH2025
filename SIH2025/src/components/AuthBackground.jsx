@@ -4,19 +4,19 @@ import { useLocation } from 'react-router-dom';
 const loginBg = '/src/assets/login_bg.jpeg';
 const signupBg = '/src/assets/signup_bg.jpeg';
 
-const AuthBackground = () => {
+const AuthBackground = ({ darkMode }) => {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
   const isSignupPage = location.pathname === '/signup';
   
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden z-0">
       {isLoginPage && (
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className={`absolute inset-0 ${darkMode ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-cyan-50'}`}>
           <img 
             src={loginBg} 
             alt="" 
-            className="w-full h-full opacity-100" 
+            className="w-full h-full opacity-30" 
             style={{ 
               imageRendering: 'high-quality', 
               objectFit: 'cover',
@@ -27,14 +27,14 @@ const AuthBackground = () => {
         </div>
       )}
       {isSignupPage && (
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className={`absolute inset-0 ${darkMode ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-cyan-50'}`}>
           <div className="absolute inset-0 flex">
             <div className="flex-1"></div>
             <div className="flex-1 flex justify-end">
               <img 
                 src={signupBg} 
                 alt="" 
-                className="h-full opacity-100" 
+                className="h-full opacity-30" 
                 style={{ 
                   imageRendering: 'high-quality', 
                   objectFit: 'cover',
@@ -46,7 +46,7 @@ const AuthBackground = () => {
         </div>
       )}
       {!isLoginPage && !isSignupPage && (
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900" />
+        <div className={`absolute inset-0 ${darkMode ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900' : 'bg-gradient-to-br from-blue-50 via-white to-cyan-50'}`} />
       )}
     </div>
   );

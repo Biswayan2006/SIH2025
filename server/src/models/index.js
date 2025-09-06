@@ -111,6 +111,7 @@ const userSchema = new mongoose.Schema({
   userId: { type: String, required: true, unique: true },
   name: String,
   email: String,
+  phone: String,
   greenScore: {
     totalCO2Saved: { type: Number, default: 0 },
     totalTrips: { type: Number, default: 0 },
