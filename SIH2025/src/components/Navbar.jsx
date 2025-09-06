@@ -188,7 +188,6 @@ export default function Navbar() {
             alt="logo"
             className="h-12 w-12 rounded-full border-2 border-cyan-500 shadow-md"
           />
-          <span className="hidden sm:block font-bold text-xl text-gray-900 dark:text-white">TransitTrack</span>
         </Link>
 
         {/* Desktop Nav */}
