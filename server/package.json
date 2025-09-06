@@ -18,15 +18,11 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^4.18.2",
-<<<<<<< HEAD
-    "mongoose": "^8.18.0",
-=======
     "express-session": "^1.18.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.18.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
->>>>>>> 057b14ebc850bae2c148969af3a91599e5e99f95
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1"
   },

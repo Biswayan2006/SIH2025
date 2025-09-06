@@ -116,7 +116,6 @@ router.post('/verify-token', verifyToken, (req, res) => {
   })
 })
 
->>>>>>> 057b14ebc850bae2c148969af3a91599e5e99f95
 module.exports = router
 
 
