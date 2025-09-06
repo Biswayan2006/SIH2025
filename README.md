@@ -22,13 +22,6 @@ This project consists of a React frontend and Node.js backend with Google OAuth 
    - Create a new cluster
    - Get your connection string and update it in the server's `.env` file
 
-3. **Verify your MongoDB connection**:
-   ```
-   cd server
-   npm run setup-db
-   ```
-   This script will check your connection, create a sample user if none exists, and provide troubleshooting tips if there are connection issues.
-
 ### Google OAuth Setup
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
