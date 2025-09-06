@@ -7,6 +7,7 @@ const LoadingContext = createContext();
 export const LoadingProvider = ({ children }) => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isRouteChanging, setIsRouteChanging] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [loadingTimeout, setLoadingTimeout] = useState(null);
   const location = useLocation();
 
@@ -55,14 +56,26 @@ export const LoadingProvider = ({ children }) => {
     };
   }, [location.pathname]);
 
+  // Check if we're in an authentication flow
+  useEffect(() => {
+    // Check if we're on the auth success page
+    if (location.pathname === '/auth/success') {
+      setIsAuthenticating(true);
+    } else {
+      setIsAuthenticating(false);
+    }
+  }, [location.pathname]);
+
   // Determine if we should show the loader
-  const isLoading = isInitialLoading || isRouteChanging;
+  const isLoading = isInitialLoading || isRouteChanging || isAuthenticating;
   
   // Expose additional information about the loading state
   const loadingState = {
     isLoading,
     isInitialLoading,
-    isRouteChanging
+    isRouteChanging,
+    isAuthenticating,
+    setIsAuthenticating
   };
 
   return (
