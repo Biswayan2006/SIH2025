@@ -12,7 +12,7 @@ dotenv.config()
 
 const app = express()
 app.use(cors({
-  origin: [process.env.FRONTEND_URL || 'http://localhost:5174', 'http://localhost:5173', 'http://localhost:5175', 'http://localhost:5176', 'http://localhost:5177'],
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }))
 app.use(express.json())
@@ -38,13 +38,20 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/transittra
 // Connect to MongoDB
 let isMongoConnected = false;
 mongoose
-  .connect(MONGO_URI)
+  .connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000 // 5 seconds timeout for server selection
+  })
   .then(() => {
     console.log('✅ MongoDB connected successfully')
     isMongoConnected = true;
   })
   .catch((err) => {
     console.warn('⚠️ MongoDB connection failed, running with demo data:', err.message)
+    console.log('💡 Make sure MongoDB is installed and running on your system')
+    console.log('💡 You can install MongoDB locally or use MongoDB Atlas.')
+    console.log('💡 For local installation, visit: https://www.mongodb.com/try/download/community')
     isMongoConnected = false;
   })
 

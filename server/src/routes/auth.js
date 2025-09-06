@@ -26,53 +26,39 @@ router.get('/google', (req, res, next) => {
 // Google OAuth callback
 router.get('/google/callback', 
   (req, res, next) => {
-    passport.authenticate('google', { 
-      failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=oauth_failed` 
-    }, (err, user, info) => {
+    passport.authenticate('google', { session: false }, (err, user, info) => {
       if (err) {
         console.error('❌ OAuth authentication error:', err)
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=oauth_error&details=${encodeURIComponent(err.message)}`)
+        const errorMsg = encodeURIComponent(err.message || 'authentication_error')
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/auth/success?error=${errorMsg}`)
       }
+      
       if (!user) {
-        console.error('❌ OAuth authentication failed:', info)
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=oauth_no_user&details=${encodeURIComponent(info ? info.message : 'Unknown error')}`)
+        console.error('❌ No user returned from Google OAuth:', info)
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/auth/success?error=authentication_failed`)
       }
-      req.logIn(user, (err) => {
-        if (err) {
-          console.error('❌ Login error:', err)
-          return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=login_failed`)
-        }
-        next()
-      })
+
+      try {
+        // Generate JWT token
+        const token = generateToken(user)
+        console.log('✅ JWT token generated successfully')
+        
+        // Encode user data to pass in URL
+        const encodedUser = encodeURIComponent(JSON.stringify({
+          name: user.name,
+          email: user.email,
+          userId: user.userId
+        }))
+        
+        // Redirect to frontend with token and user data
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174'
+        console.log('🔗 Redirecting to:', frontendUrl + '/auth/success')
+        res.redirect(`${frontendUrl}/auth/success?token=${token}&user=${encodedUser}`)
+      } catch (error) {
+        console.error('❌ Token generation error:', error)
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/auth/success?error=token_generation_failed`)
+      }
     })(req, res, next)
-  },
-  async (req, res) => {
-    try {
-      console.log('🔍 OAuth callback successful, user:', req.user ? req.user.name : 'No user')
-      
-      if (!req.user) {
-        console.error('❌ No user found in OAuth callback')
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=no_user_data`)
-      }
-      
-      // Generate JWT token
-      const token = generateToken(req.user)
-      console.log('✅ JWT token generated successfully')
-      
-      // Redirect to frontend with token
-      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174'
-      const redirectUrl = `${frontendUrl}/auth/success?token=${token}&user=${encodeURIComponent(JSON.stringify({
-        name: req.user.name,
-        email: req.user.email,
-        userId: req.user.userId
-      }))}`
-      
-      console.log('🔗 Redirecting to:', frontendUrl + '/auth/success')
-      res.redirect(redirectUrl)
-    } catch (error) {
-      console.error('❌ Error in OAuth callback:', error)
-      res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=token_generation_failed`)
-    }
   }
 )
 

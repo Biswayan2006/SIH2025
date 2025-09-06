@@ -61,9 +61,12 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/api/auth/google/callback'
-  }, async (accessToken, refreshToken, profile, done) => {
+    callbackURL: '/api/auth/google/callback',
+    proxy: true,
+    passReqToCallback: true
+  }, async (req, accessToken, refreshToken, profile, done) => {
     try {
+      console.log('Google profile received:', profile.id, profile.displayName)
       // Check if we're in demo mode (MongoDB not connected)
       try {
         // Try to use MongoDB first
@@ -79,7 +82,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         const newUser = new User({
           userId: profile.id,
           name: profile.displayName,
-          email: profile.emails[0].value,
+          email: profile.emails && profile.emails[0] ? profile.emails[0].value : '',
           greenScore: {
             totalCO2Saved: 0,
             totalTrips: 0,
