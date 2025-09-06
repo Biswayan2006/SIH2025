@@ -1,15 +1,4 @@
 import { useState, useEffect } from 'react';
-import { db, auth } from '../firebase';
-import {
-  collection,
-  addDoc,
-  onSnapshot,
-  query,
-  orderBy,
-  updateDoc,
-  doc,
-  serverTimestamp
-} from 'firebase/firestore';
 import PageFadeIn from '../components/PageFadeIn';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -36,29 +25,14 @@ export default function Feedback() {
   const [isServiceAvailable, setIsServiceAvailable] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
-      setUser(user);
-    });
-    return unsubscribe;
+    // Mock user for now
+    setUser({ displayName: 'Test User', email: 'test@example.com' });
   }, []);
 
   useEffect(() => {
-    const q = query(collection(db, 'feedbacks'), orderBy('timestamp', 'desc'));
-    const unsubscribe = onSnapshot(q, {
-      next: (snapshot) => {
-        const feedbackData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setFeedback(feedbackData);
-        setIsServiceAvailable(true);
-        setShowError(false);
-      },
-      error: (error) => {
-        console.error('Firestore error:', error);
-        setIsServiceAvailable(false);
-        setShowError(true);
-        setErrorMessage('Service is currently unavailable. Please try again later.');
-      }
-    });
-    return unsubscribe;
+    // Mock feedback data for now
+    setFeedback([]);
+    setIsServiceAvailable(true);
   }, []);
 
   const feedbackTypes = [
@@ -94,39 +68,17 @@ export default function Feedback() {
     }
 
     try {
-     const feedbackData = {
-  ...formData,
-  rating: formData.type === 'rating' ? rating : 0,   // ✅ use 0 instead of null
-  upvotes: 0,
-  status: 'submitted',
-  timestamp: serverTimestamp(),
-  author: formData.anonymous ? 'Anonymous' : user ? user.displayName || user.email : 'User'
-};
-
-
-      await addDoc(collection(db, 'feedbacks'), feedbackData);
-
-      setFormData({
-        type: 'issue',
-        route: '',
-        title: '',
-        description: '',
-        priority: 'medium',
-        anonymous: true,
-        contact: ''
-      });
-      setRating(0);
-
+      // Mock submission for now
+      console.log('Submitting feedback:', formData);
       setShowSuccess(true);
       setTimeout(() => {
         setShowSuccess(false);
         setActiveTab('community');
       }, 3000);
     } catch (error) {
-      console.error('Error adding document: ', error);
+      console.error('Error submitting feedback:', error);
       setShowError(true);
       setErrorMessage('Failed to submit feedback. Please try again later.');
-      setIsServiceAvailable(false);
     } finally {
       setIsSubmitting(false);
     }
@@ -140,17 +92,13 @@ export default function Feedback() {
     }
 
     try {
-      const feedbackRef = doc(db, 'feedbacks', id);
-      const currentFeedback = feedback.find(item => item.id === id);
-      await updateDoc(feedbackRef, {
-        upvotes: (currentFeedback.upvotes || 0) + 1
-      });
+      // Mock upvote for now
+      console.log('Upvoting feedback:', id);
       setShowError(false);
     } catch (error) {
-      console.error('Error updating upvotes:', error);
+      console.error('Error upvoting feedback:', error);
       setShowError(true);
       setErrorMessage('Failed to update upvotes. Please try again later.');
-      setIsServiceAvailable(false);
     }
   };
 

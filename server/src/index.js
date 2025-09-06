@@ -16,10 +16,17 @@ const PORT = process.env.PORT || 4001
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/transittrack'
 
 // Connect to MongoDB
+let isMongoConnected = false;
 mongoose
   .connect(MONGO_URI)
-  .then(() => console.log('✅ MongoDB connected successfully'))
-  .catch((err) => console.error('❌ MongoDB connection error:', err))
+  .then(() => {
+    console.log('✅ MongoDB connected successfully')
+    isMongoConnected = true;
+  })
+  .catch((err) => {
+    console.warn('⚠️ MongoDB connection failed, running with demo data:', err.message)
+    isMongoConnected = false;
+  })
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -27,7 +34,7 @@ app.get('/api/health', (req, res) => {
     status: 'ok', 
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+    mongodb: isMongoConnected ? 'connected' : 'demo-mode'
   })
 })
 
@@ -38,12 +45,22 @@ app.use((req, res, next) => {
 })
 
 // API Routes
-app.use('/api/auth', require('./routes/auth'))
-app.use('/api/feedback', require('./routes/feedback'))
-app.use('/api/routes', require('./routes/routes'))
-app.use('/api/buses', require('./routes/buses'))
-app.use('/api/green-score', require('./routes/greenScore'))
-app.use('/api/analytics', require('./routes/analytics'))
+if (isMongoConnected) {
+  app.use('/api/auth', require('./routes/auth'))
+  app.use('/api/feedback', require('./routes/feedback'))
+  app.use('/api/routes', require('./routes/routes'))
+  app.use('/api/buses', require('./routes/buses'))
+  app.use('/api/green-score', require('./routes/greenScore'))
+  app.use('/api/analytics', require('./routes/analytics'))
+} else {
+  console.log('📋 Running in demo mode with mock data')
+  app.use('/api/auth', require('./routes/auth'))
+  app.use('/api/feedback', require('./routes/feedback'))
+  app.use('/api/routes', require('./routes/routesDemo'))
+  app.use('/api/buses', require('./routes/busesDemo'))
+  app.use('/api/green-score', require('./routes/greenScore'))
+  app.use('/api/analytics', require('./routes/analytics'))
+}
 
 // Create HTTP server and Socket.IO
 const server = http.createServer(app)
@@ -96,40 +113,71 @@ io.on('connection', (socket) => {
 // Simulate real-time bus updates (for demo purposes)
 setInterval(async () => {
   try {
-    const buses = await Bus.find({ status: 'active' })
-    
-    for (const bus of buses) {
-      // Simulate small location changes
-      const latChange = (Math.random() - 0.5) * 0.001
-      const lngChange = (Math.random() - 0.5) * 0.001
+    if (isMongoConnected) {
+      const buses = await Bus.find({ status: 'active' })
       
-      const updatedBus = {
-        busId: bus.busId,
-        route: bus.route,
-        location: {
-          lat: bus.currentLocation.lat + latChange,
-          lng: bus.currentLocation.lng + lngChange
-        },
-        passengers: Math.max(0, bus.currentPassengers + Math.floor((Math.random() - 0.5) * 3)),
-        delay: Math.max(0, bus.delay + Math.floor((Math.random() - 0.5) * 2)),
-        timestamp: new Date().toISOString()
-      }
-      
-      // Update database
-      await Bus.findOneAndUpdate(
-        { busId: bus.busId },
-        {
-          currentLocation: updatedBus.location,
-          currentPassengers: Math.min(updatedBus.passengers, bus.capacity),
-          delay: updatedBus.delay,
-          lastUpdated: new Date()
+      for (const bus of buses) {
+        // Simulate small location changes
+        const latChange = (Math.random() - 0.5) * 0.001
+        const lngChange = (Math.random() - 0.5) * 0.001
+        
+        const updatedBus = {
+          busId: bus.busId,
+          route: bus.route,
+          location: {
+            lat: bus.currentLocation.lat + latChange,
+            lng: bus.currentLocation.lng + lngChange
+          },
+          passengers: Math.max(0, bus.currentPassengers + Math.floor((Math.random() - 0.5) * 3)),
+          delay: Math.max(0, bus.delay + Math.floor((Math.random() - 0.5) * 2)),
+          timestamp: new Date().toISOString()
         }
-      )
+        
+        // Update database
+        await Bus.findOneAndUpdate(
+          { busId: bus.busId },
+          {
+            currentLocation: updatedBus.location,
+            currentPassengers: Math.min(updatedBus.passengers, bus.capacity),
+            delay: updatedBus.delay,
+            lastUpdated: new Date()
+          }
+        )
+        
+        // Emit to subscribers
+        io.to(`route_${bus.route}`).emit('busLocationUpdate', updatedBus)
+        io.to('all_buses').emit('busLocationUpdate', updatedBus)
+        io.to('admin_updates').emit('fleetUpdate', updatedBus)
+      }
+    } else {
+      // Demo mode - simulate updates for demo buses
+      const demoBuses = [
+        { busId: 'B-12A-01', route: '12A', lat: 28.6139, lng: 77.2090 },
+        { busId: 'B-12A-02', route: '12A', lat: 28.5945, lng: 77.1532 },
+        { busId: 'B-24X-01', route: '24X', lat: 28.6239, lng: 77.2190 }
+      ]
       
-      // Emit to subscribers
-      io.to(`route_${bus.route}`).emit('busLocationUpdate', updatedBus)
-      io.to('all_buses').emit('busLocationUpdate', updatedBus)
-      io.to('admin_updates').emit('fleetUpdate', updatedBus)
+      for (const bus of demoBuses) {
+        const latChange = (Math.random() - 0.5) * 0.001
+        const lngChange = (Math.random() - 0.5) * 0.001
+        
+        const updatedBus = {
+          busId: bus.busId,
+          route: bus.route,
+          location: {
+            lat: bus.lat + latChange,
+            lng: bus.lng + lngChange
+          },
+          passengers: Math.floor(Math.random() * 50),
+          delay: Math.floor(Math.random() * 10),
+          timestamp: new Date().toISOString()
+        }
+        
+        // Emit to subscribers
+        io.to(`route_${bus.route}`).emit('busLocationUpdate', updatedBus)
+        io.to('all_buses').emit('busLocationUpdate', updatedBus)
+        io.to('admin_updates').emit('fleetUpdate', updatedBus)
+      }
     }
   } catch (error) {
     console.error('Error in bus simulation:', error)

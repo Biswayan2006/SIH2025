@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import './index.css'
 import App from './App.jsx'
 import Home from './pages/Home.jsx'
@@ -38,7 +39,9 @@ import { LanguageProvider } from './context/LanguageContext'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <LanguageProvider>
-      <RouterProvider router={router} />
+      <AnimatePresence mode="wait">
+        <RouterProvider router={router} />
+      </AnimatePresence>
     </LanguageProvider>
   </StrictMode>,
 )
