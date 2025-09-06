@@ -51,7 +51,7 @@ function LanguageSelector() {
     <div className="relative" ref={dropdownRef} onKeyDown={handleKeyDown}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-gray-800 dark:text-white hover:text-cyan-500 transition"
+        className="flex items-center gap-2 px-3 py-2 rounded-md text-sm text-gray-800 dark:text-white hover:text-cyan-500 transition-all duration-200 transform hover:-translate-y-0.5"
         aria-haspopup="true"
         aria-expanded={isOpen}
         aria-label={`Select language: currently ${currentLang?.name}`}
@@ -74,7 +74,7 @@ function LanguageSelector() {
             <button
               key={lang.code}
               onClick={() => handleSelect(lang.code)}
-              className="w-full px-4 py-2 text-left flex items-center gap-3 text-gray-800 dark:text-white hover:text-cyan-500 transition"
+              className="w-full px-4 py-2 text-left flex items-center gap-3 text-gray-800 dark:text-white hover:text-cyan-500 transition-all duration-200 transform hover:-translate-y-0.5"
               role="menuitem"
               tabIndex={0}
               aria-current={lang.code === language ? 'true' : 'false'}
@@ -159,14 +159,14 @@ export default function Navbar() {
   }, [open])
 
   const linkClass = ({ isActive }) =>
-    `relative font-medium px-3 py-1 transition outline-none
-     ${isActive ? 'text-cyan-500' : 'text-gray-800 dark:text-white hover:text-cyan-500'}
-     focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e] rounded-md`
+    `relative font-medium px-3 py-1 transition-all duration-200 outline-none transform
+     ${isActive ? 'text-cyan-500 -translate-y-0.5' : 'text-gray-800 dark:text-white hover:text-cyan-500 hover:-translate-y-0.5'}
+     focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e] focus:-translate-y-0.5 rounded-md`
 
   const mobileClass = ({ isActive }) =>
-    `block text-lg py-2 text-center transition-colors outline-none
-     ${isActive ? 'text-cyan-500' : 'text-gray-800 dark:text-white hover:text-cyan-500'}
-     focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e] rounded-md`
+    `block text-lg py-2 text-center transition-all duration-200 outline-none transform
+     ${isActive ? 'text-cyan-500 -translate-y-0.5' : 'text-gray-800 dark:text-white hover:text-cyan-500 hover:-translate-y-0.5'}
+     focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e] focus:-translate-y-0.5 rounded-md`
 
   return (
     <>
@@ -204,7 +204,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 md:gap-3">
           <LanguageSelector />
           <ThemeToggle />
-          <NavLink to="/login" className="hidden sm:inline-block bg-cyan-500 hover:bg-cyan-600 text-white px-2 py-1 text-sm rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e]">
+          <NavLink to="/login" className="hidden sm:inline-block bg-cyan-500 hover:bg-cyan-600 text-white px-2 py-1 text-sm rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition-all duration-200 transform hover:-translate-y-0.5 outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e] focus:-translate-y-0.5">
             {translate('login')}
           </NavLink>
         </div>
@@ -212,7 +212,7 @@ export default function Navbar() {
         {/* Hamburger Icon */}
         <button 
           onClick={() => setOpen(!open)} 
-          className="md:hidden flex items-center justify-center w-10 h-10 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          className="md:hidden flex items-center justify-center w-10 h-10 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 transform hover:-translate-y-0.5"
           aria-label="Toggle mobile menu"
           aria-expanded={open}
           aria-controls="mobile-menu"
@@ -257,7 +257,7 @@ export default function Navbar() {
             <div className="w-20 h-20 bg-cyan-100 dark:bg-cyan-900 rounded-full flex items-center justify-center mb-2">
               <span className="text-3xl">👤</span>
             </div>
-            <NavLink to="/login" className="mt-2 bg-[#1B9AAA] hover:bg-cyan-600 text-white px-6 py-2 rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e]">
+            <NavLink to="/login" className="mt-2 bg-[#1B9AAA] hover:bg-cyan-600 text-white px-6 py-2 rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition-all duration-200 transform hover:-translate-y-0.5 outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 dark:focus:ring-offset-[#1a1a2e] focus:-translate-y-0.5">
               {translate('login')}
             </NavLink>
           </div>
@@ -314,7 +314,7 @@ export default function Navbar() {
                   to={item.to} 
                   end={item.to === '/'} 
                   className={({ isActive }) => 
-                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400' : 'text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/30'}`
+                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 transform ${isActive ? 'bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 -translate-y-0.5' : 'text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800/30 hover:text-cyan-500 hover:-translate-y-0.5'}`
                   }
                 >
                   {getIcon(item.to)}
@@ -335,4 +335,4 @@ export default function Navbar() {
       </div>
     </>
   )
-}
+} // End of Navbar component

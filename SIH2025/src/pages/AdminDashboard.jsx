@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, CircleMarker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
+import { useLanguage } from '../context/LanguageContext'
 
 const fleetData = [
   { id: 'B-12A', route: '12A', lat: 28.6139, lng: 77.2090, status: 'active', passengers: 28, capacity: 45, delay: 2, driver: 'John Doe', lastUpdate: new Date() },
@@ -35,6 +36,7 @@ const feedbackSummary = [
 ]
 
 export default function AdminDashboard() {
+  const { translate } = useLanguage()
   const [activeTab, setActiveTab] = useState('overview')
   const [selectedBus, setSelectedBus] = useState(null)
   const [timeRange, setTimeRange] = useState('24h')
@@ -296,8 +298,8 @@ export default function AdminDashboard() {
                         <div className="text-sm space-y-1">
                           <div className="font-bold">{bus.id}</div>
                           <div>{translate('route')}: {bus.route}</div>
-                          <div>Status: {bus.status}</div>
-                          <div>Passengers: {bus.passengers}/{bus.capacity}</div>
+                          <div>{translate('status')}: {bus.status}</div>
+                          <div>{translate('passengers')}: {bus.passengers}/{bus.capacity}</div>
                         </div>
                       </Popup>
                     </CircleMarker>
@@ -309,7 +311,7 @@ export default function AdminDashboard() {
             {/* Fleet List */}
             <div className="space-y-4">
               <div className="bg-white rounded-lg shadow-sm p-4">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Fleet Status</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">{translate('fleetStatus')}</h3>
                 <div className="space-y-3">
                   {fleetData.map((bus) => {
                     const crowd = getCrowdLevel(bus.passengers, bus.capacity)
@@ -331,12 +333,12 @@ export default function AdminDashboard() {
                         </div>
                         
                         <div className="text-sm space-y-1">
-                          <div>Route: {bus.route}</div>
+                          <div>{translate('route')}: {bus.route}</div>
                           {bus.status === 'active' && (
                             <>
-                              <div>Passengers: {bus.passengers}/{bus.capacity}</div>
+                              <div>{translate('passengers')}: {bus.passengers}/{bus.capacity}</div>
                               <div className="flex items-center gap-2">
-                                <span>Crowd:</span>
+                                <span>{translate('crowd')}:</span>
                                 <span 
                                   className="w-3 h-3 rounded-full"
                                   style={{ backgroundColor: crowd.color }}
@@ -360,16 +362,16 @@ export default function AdminDashboard() {
               {/* Selected Bus Details */}
               {selectedBus && (
                 <div className="bg-white rounded-lg shadow-sm p-4">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Bus Details</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">{translate('busDetails')}</h3>
                   <div className="space-y-2 text-sm">
-                    <div><span className="font-medium">ID:</span> {selectedBus.id}</div>
-                    <div><span className="font-medium">Route:</span> {selectedBus.route}</div>
-                    <div><span className="font-medium">Status:</span> {selectedBus.status}</div>
+                    <div><span className="font-medium">{translate('id')}:</span> {selectedBus.id}</div>
+                    <div><span className="font-medium">{translate('route')}:</span> {selectedBus.route}</div>
+                    <div><span className="font-medium">{translate('status')}:</span> {selectedBus.status}</div>
                     {selectedBus.driver && (
-                      <div><span className="font-medium">Driver:</span> {selectedBus.driver}</div>
+                      <div><span className="font-medium">{translate('driver')}:</span> {selectedBus.driver}</div>
                     )}
-                    <div><span className="font-medium">Capacity:</span> {selectedBus.passengers}/{selectedBus.capacity}</div>
-                    <div><span className="font-medium">Last Update:</span> {selectedBus.lastUpdate.toLocaleTimeString()}</div>
+                    <div><span className="font-medium">{translate('capacity')}:</span> {selectedBus.passengers}/{selectedBus.capacity}</div>
+                    <div><span className="font-medium">{translate('lastUpdate')}:</span> {selectedBus.lastUpdate.toLocaleTimeString()}</div>
                   </div>
                 </div>
               )}
