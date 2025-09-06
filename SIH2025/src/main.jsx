@@ -37,13 +37,16 @@ const router = createBrowserRouter([
 ])
 
 import { LanguageProvider } from './context/LanguageContext'
+import { AuthProvider } from './context/AuthContext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <LanguageProvider>
-      <AnimatePresence mode="wait">
-        <RouterProvider router={router} />
-      </AnimatePresence>
+      <AuthProvider>
+        <AnimatePresence mode="wait">
+          <RouterProvider router={router} />
+        </AnimatePresence>
+      </AuthProvider>
     </LanguageProvider>
   </StrictMode>,
 )

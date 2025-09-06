@@ -12,32 +12,66 @@ router.post('/login', (req, res) => {
 
 // Initiate Google OAuth
 router.get('/google', (req, res, next) => {
+  console.log('🚀 Starting Google OAuth flow')
   if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5176'}/login?error=google_oauth_not_configured`)
+    console.error('❌ Google OAuth not configured')
+    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=google_oauth_not_configured`)
   }
   passport.authenticate('google', { 
-    scope: ['profile', 'email'] 
+    scope: ['profile', 'email'],
+    prompt: 'select_account'  // Force account picker
   })(req, res, next)
 })
 
 // Google OAuth callback
 router.get('/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login?error=oauth_failed' }),
+  (req, res, next) => {
+    passport.authenticate('google', { 
+      failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=oauth_failed` 
+    }, (err, user, info) => {
+      if (err) {
+        console.error('❌ OAuth authentication error:', err)
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=oauth_error&details=${encodeURIComponent(err.message)}`)
+      }
+      if (!user) {
+        console.error('❌ OAuth authentication failed:', info)
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=oauth_no_user&details=${encodeURIComponent(info ? info.message : 'Unknown error')}`)
+      }
+      req.logIn(user, (err) => {
+        if (err) {
+          console.error('❌ Login error:', err)
+          return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=login_failed`)
+        }
+        next()
+      })
+    })(req, res, next)
+  },
   async (req, res) => {
     try {
+      console.log('🔍 OAuth callback successful, user:', req.user ? req.user.name : 'No user')
+      
+      if (!req.user) {
+        console.error('❌ No user found in OAuth callback')
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=no_user_data`)
+      }
+      
       // Generate JWT token
       const token = generateToken(req.user)
+      console.log('✅ JWT token generated successfully')
       
       // Redirect to frontend with token
-      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5176'
-      res.redirect(`${frontendUrl}/auth/success?token=${token}&user=${encodeURIComponent(JSON.stringify({
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174'
+      const redirectUrl = `${frontendUrl}/auth/success?token=${token}&user=${encodeURIComponent(JSON.stringify({
         name: req.user.name,
         email: req.user.email,
         userId: req.user.userId
-      }))}`)
+      }))}`
+      
+      console.log('🔗 Redirecting to:', frontendUrl + '/auth/success')
+      res.redirect(redirectUrl)
     } catch (error) {
-      console.error('Error in OAuth callback:', error)
-      res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5176'}/login?error=token_generation_failed`)
+      console.error('❌ Error in OAuth callback:', error)
+      res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/login?error=token_generation_failed`)
     }
   }
 )
