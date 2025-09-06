@@ -3,14 +3,34 @@ const http = require('http')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const dotenv = require('dotenv')
+const session = require('express-session')
 const { Server } = require('socket.io')
 const { Bus } = require('./models')
+const { passport } = require('./config/passport')
 
 dotenv.config()
 
 const app = express()
-app.use(cors())
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5176',
+  credentials: true
+}))
 app.use(express.json())
+
+// Session configuration for passport
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'your-session-secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // Set to true in production with HTTPS
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}))
+
+// Initialize Passport
+app.use(passport.initialize())
+app.use(passport.session())
 
 const PORT = process.env.PORT || 4001
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/transittrack'
@@ -66,7 +86,7 @@ if (isMongoConnected) {
 const server = http.createServer(app)
 const io = new Server(server, { 
   cors: { 
-    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'],
+    origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176'],
     methods: ['GET', 'POST']
   } 
 })

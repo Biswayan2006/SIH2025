@@ -31,8 +31,10 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    // TODO: Implement Google authentication
-    console.log('Google login clicked');
+    // Redirect directly to Google OAuth endpoint
+    console.log('Redirecting to Google OAuth...')
+    const backendUrl = 'http://localhost:4001' // Backend server URL
+    window.location.href = `${backendUrl}/api/auth/google`
   };
 
   return (

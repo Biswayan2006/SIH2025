@@ -295,7 +295,7 @@ export default function AdminDashboard() {
                       <Popup>
                         <div className="text-sm space-y-1">
                           <div className="font-bold">{bus.id}</div>
-                          <div>{translate('route')}: {bus.route}</div>
+                          <div>Route: {bus.route}</div>
                           <div>Status: {bus.status}</div>
                           <div>Passengers: {bus.passengers}/{bus.capacity}</div>
                         </div>
