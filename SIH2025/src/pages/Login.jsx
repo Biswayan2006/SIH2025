@@ -1,4 +1,3 @@
-﻿﻿import { useState, useEffect } from "react";
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -228,24 +227,20 @@ const Login = () => {
             </motion.button>
           </form>
 
-          {/* Sign Up Link */}
+          {/* Navigation Link */}
           <div className="mt-6 text-center">
             <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               Don't have an account?{' '}
-              <Link
-                to="/signup"
-                className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
-              >
-                Sign up now!
+              <Link to="/signup" className="text-blue-600 hover:text-blue-500 font-medium">
+                Sign up
               </Link>
             </p>
           </div>
-        </div>
-      </motion.div>
-    </div>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 };
 
 export default Login;
-
