@@ -68,13 +68,6 @@ export default function Login() {
       setLoading(false);
     }
   }, [location.search, setLoading]);
-=======
-  const { login } = useAuth();
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [isLoading, setIsLoading] = useState(false);
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-  const navigate = useNavigate();
->>>>>>> b745563d6275b1d0cde8d891d5035b841f55b1b9
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -213,7 +206,6 @@ export default function Login() {
             </motion.div>
 
             <motion.div variants={itemVariants} className="flex items-center justify-between text-sm">
-=======
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <AuthBackground darkMode={darkMode} />
       
@@ -282,7 +274,6 @@ export default function Login() {
             </div>
 
             <div className="flex items-center justify-between">
->>>>>>> b745563d6275b1d0cde8d891d5035b841f55b1b9
               <div className="flex items-center">
                 <input
                   id="remember-me"

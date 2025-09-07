@@ -350,7 +350,6 @@ const getTimeAgo = timestamp => {
     )
   }
   
->>>>>>> b745563d6275b1d0cde8d891d5035b841f55b1b9
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-6">
@@ -734,7 +733,6 @@ const getTimeAgo = timestamp => {
                 {feedbackTypes.map((type) => {
                   const count = feedback.filter(item => item.type === type.value).length
                   return (
->>>>>>> b745563d6275b1d0cde8d891d5035b841f55b1b9
                     <button
                       key={type.value}
                       onClick={() => setFilterType(type.value)}
@@ -813,7 +811,6 @@ const getTimeAgo = timestamp => {
                           <span>by {item.author}</span>
                           <span>•</span>
                           <span>{getTimeAgo(item.timestamp)}</span>
->>>>>>> b745563d6275b1d0cde8d891d5035b841f55b1b9
                         </div>
                         {item.type === 'rating' && <StarRating rating={item.rating} readonly />}
                       </div>
