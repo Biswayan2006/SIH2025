@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { useTheme } from '../context/ThemeContext'
 
+// GoogleLogin import removed as per user request
+
 // Import images for carousel
 import bus1 from '../assets/bus_1.jpeg'
 import bus2 from '../assets/bus_2.jpg'
@@ -81,6 +83,7 @@ const Home = () => {
   }
 
   return (
+<>
     <div className="min-h-screen overflow-hidden">
       {/* Modern Hero Section */}
       <section className="relative section-spacing">
@@ -359,6 +362,7 @@ const Home = () => {
         </div>
       </section>
     </div>
+    </>
   )
 }
 

@@ -3,11 +3,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import AuthBackground from '../components/AuthBackground';
 
 const SignUp = () => {
   const { translate } = useLanguage();
   const { darkMode } = useTheme();
+  const { login } = useAuth();
   const navigate = useNavigate();
   
   const [formData, setFormData] = useState({
@@ -20,6 +22,7 @@ const SignUp = () => {
   });
   const [loading, setLoading] = useState(false);
   const [passwordError, setPasswordError] = useState('');
+  const [apiError, setApiError] = useState('');
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   
   // CSS for animations
@@ -58,10 +61,14 @@ const SignUp = () => {
     if (name === 'password' || name === 'confirmPassword') {
       setPasswordError('');
     }
+    if (name === 'email') {
+      setApiError('');
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiError('');
 
     if (formData.password !== formData.confirmPassword) {
       setPasswordError('Passwords do not match');
@@ -69,18 +76,38 @@ const SignUp = () => {
     }
 
     if (!formData.agreeTerms) {
-      alert('Please agree to the terms and conditions');
+      setApiError('Please agree to the terms and conditions');
       return;
     }
 
     setLoading(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      navigate('/login');
+      const response = await fetch('http://localhost:4001/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Login the user automatically
+        login(data.user, data.token);
+        navigate('/');
+      } else {
+        setApiError(data.message || 'Signup failed. Please try again.');
+      }
     } catch (error) {
       console.error('Signup failed:', error);
-      alert('Signup failed. Please try again.');
+      setApiError('Network error. Please check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -89,39 +116,61 @@ const SignUp = () => {
   // Google Sign Up handler
   const handleGoogleSignUp = async () => {
     setLoading(true);
+    setApiError('');
     try {
-      // Simulate Google authentication
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      navigate('/login');
+      // Redirect to backend Google OAuth endpoint
+      window.location.href = 'http://localhost:4001/api/auth/google';
     } catch (error) {
       console.error('Google signup failed:', error);
-      alert('Google signup failed. Please try again.');
-    } finally {
+      setApiError('Google signup failed. Please try again.');
+
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <AuthBackground darkMode={darkMode} />
       
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-md w-full space-y-8"
+        className="max-w-md w-full space-y-8 relative z-20"
       >
-        <div className={`bg-white dark:bg-gray-800 shadow-xl rounded-xl p-8 ${darkMode ? 'border border-gray-700' : ''}`}>
+        <div className={`${darkMode ? 'bg-gray-800/95' : 'bg-white/95'} backdrop-blur-lg shadow-2xl rounded-xl p-8 border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
           <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <img
+                src="/src/assets/image.png"
+                alt="TransitTrack Logo"
+                className="h-16 w-16 rounded-full border-2 border-cyan-500 shadow-lg"
+              />
+            </div>
             <h2 className={`text-3xl font-extrabold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
               {translate('createAccount')}
             </h2>
-            <p className={`mt-2 text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            <p className={`mt-2 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
               {translate('joinCommunity')}
             </p>
           </div>
 
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* API Error Display */}
+            {apiError && (
+              <div className="rounded-md bg-red-50 p-4">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-red-800">{apiError}</p>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* Full Name */}
             <div>
               <label htmlFor="fullName" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>

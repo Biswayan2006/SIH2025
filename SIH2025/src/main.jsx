@@ -16,6 +16,8 @@ import Accessibility from './pages/Accessibility.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
 import Profile from './pages/Profile.jsx'
 
+import { GoogleOAuthProvider} from '@react-oauth/google'
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -39,12 +41,17 @@ const router = createBrowserRouter([
 import { LanguageProvider } from './context/LanguageContext'
 import { AuthProvider } from './context/AuthContext'
 
+// Get the Google Client ID from environment variables
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
     <LanguageProvider>
       <AuthProvider>
         <RouterProvider router={router} />
       </AuthProvider>
     </LanguageProvider>
+    </GoogleOAuthProvider>
   </StrictMode>,
 )

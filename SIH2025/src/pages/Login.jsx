@@ -4,15 +4,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import { useLoading } from '../context/LoadingContext';
+import { useAuth } from '../context/AuthContext';
 import BusAnimation from '../components/BusAnimation';
 import AuthBackground from '../components/AuthBackground';
 
-const Login = () => {
+export default function Login() {
   const { translate } = useLanguage();
   const { darkMode } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const { setLoading } = useLoading();
+  const { login } = useAuth();
   
   // CSS for animations
   useEffect(() => {
@@ -66,15 +68,43 @@ const Login = () => {
       setLoading(false);
     }
   }, [location.search, setLoading]);
+=======
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
+  const navigate = useNavigate();
+>>>>>>> b745563d6275b1d0cde8d891d5035b841f55b1b9
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    if (formData.email && formData.password) {
-      navigate("/admin");
+    
+    try {
+      const response = await fetch('http://localhost:4001/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        login(data.user, data.token);
+        navigate('/');
+      } else {
+        console.error('Login failed:', data.message);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleInputChange = (e) => {
@@ -107,21 +137,14 @@ const Login = () => {
     show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
-  const handleGoogleLogin = () => {
-    // Set loading state
+  // Google Login handler
+  const handleGoogleLogin = async () => {
     setIsLoading(true);
-    
-    // Redirect directly to Google OAuth endpoint
-    console.log('Redirecting to Google OAuth...')
-    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:4001' // Backend server URL
-    
     try {
-      // Add a small delay to show loading state before redirect
-      setTimeout(() => {
-        window.location.href = `${backendUrl}/api/auth/google`
-      }, 500);
+      // Redirect to backend Google OAuth endpoint
+      window.location.href = 'http://localhost:4001/api/auth/google';
     } catch (error) {
-      console.error('Failed to redirect to Google OAuth:', error);
+      console.error('Google login failed:', error);
       setIsLoading(false);
     }
   };
@@ -130,7 +153,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
       {/* Animated Transportation Background */}
       <BusAnimation />
-      <AuthBackground />
+      <AuthBackground darkMode={darkMode} />
       
       {/* Interactive cursor effect */}
       <div
@@ -190,6 +213,76 @@ const Login = () => {
             </motion.div>
 
             <motion.div variants={itemVariants} className="flex items-center justify-between text-sm">
+=======
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <AuthBackground darkMode={darkMode} />
+      
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-md w-full space-y-8 relative z-20"
+      >
+        <div className={`${darkMode ? 'bg-gray-800/95' : 'bg-white/95'} backdrop-blur-lg shadow-2xl rounded-xl p-8 border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <img
+                src="/src/assets/image.png"
+                alt="TransitTrack Logo"
+                className="h-16 w-16 rounded-full border-2 border-cyan-500 shadow-lg"
+              />
+            </div>
+            <h2 className={`text-3xl font-extrabold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+              {translate('loginToAccount')}
+            </h2>
+            <p className={`mt-2 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              {translate('loginToDashboard')}
+            </p>
+          </div>
+
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                {translate('emailAddress')}
+              </label>
+              <div className="mt-1">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={`appearance-none block w-full px-3 py-2 border ${darkMode ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400' : 'border-gray-300 placeholder-gray-400 text-gray-900'} rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+                  placeholder="you@example.com"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div>
+              <label htmlFor="password" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                {translate('password')}
+              </label>
+              <div className="mt-1">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className={`appearance-none block w-full px-3 py-2 border ${darkMode ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400' : 'border-gray-300 placeholder-gray-400 text-gray-900'} rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+>>>>>>> b745563d6275b1d0cde8d891d5035b841f55b1b9
               <div className="flex items-center">
                 <input
                   id="remember-me"
@@ -279,7 +372,5 @@ const Login = () => {
       </motion.div>
     </div>
   );
-};
-
-export default Login;
+}
 

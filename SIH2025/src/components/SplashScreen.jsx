@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './SplashScreen.css';
-import logo from '../assets/image.png';
+import smoothRideGif from '../assets/Smooth ride.gif';
 
 const SplashScreen = ({ onFinished }) => {
   const [isExiting, setIsExiting] = useState(false);
@@ -17,34 +17,12 @@ const SplashScreen = ({ onFinished }) => {
   return (
     <div className={`splash-screen ${isExiting ? 'fade-out' : ''}`}>
       <div className="splash-container">
-        <svg className="splash-svg" viewBox="0 0 300 150">
-          {/* Route line */}
-          <path
-            className="route-line"
-            d="M20,100 C100,20 200,130 280,50"
-            fill="none"
-            stroke="#4CAF50"
-            strokeWidth="4"
-            strokeLinecap="round"
-          />
-
-          {/* Bus icon */}
-          <g className="bus-icon">
-            <path d="M-15,-10 L15,-10 L15,10 L-15,10 Z" fill="#2196F3" />
-            <circle cx="-10" cy="12" r="3" fill="#fff" />
-            <circle cx="10" cy="12" r="3" fill="#fff" />
-          </g>
-
-          {/* Map pin marker */}
-          <path
-            className="map-pin"
-            d="M280,50 A20,20 0 1,1 280,49.9 Z"
-            fill="#FF5722"
-          />
-        </svg>
-
-        {/* Logo */}
-        <img src={logo} alt="TransitTrack Logo" className="splash-logo" />
+        {/* Smooth ride GIF */}
+        <img 
+          src={smoothRideGif} 
+          alt="Smooth Ride Animation" 
+          className="smooth-ride-gif" 
+        />
       </div>
     </div>
   );

@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5174,
+    strictPort: true, // Force exact port, fail if occupied
+    host: true, // Allow external connections
     hmr: { overlay: true },
     proxy: {
       '/api': {

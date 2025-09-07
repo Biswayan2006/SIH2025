@@ -3,10 +3,146 @@ const { passport, generateToken, verifyToken } = require('../config/passport')
 const { User } = require('../models')
 const router = Router()
 
+// Traditional signup (signup endpoint)
+router.post('/signup', async (req, res) => {
+  try {
+    const { fullName, email, phone, password } = req.body;
+    
+    // Validate required fields
+    if (!fullName || !email || !phone || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'All fields are required'
+      });
+    }
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: 'User with this email already exists'
+      });
+    }
+    
+    // Create new user
+    const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const newUser = new User({
+      userId,
+      name: fullName,
+      email,
+      phone,
+      greenScore: {
+        totalCO2Saved: 0,
+        totalTrips: 0,
+        totalDistance: 0,
+        totalMoneySaved: 0,
+        level: 1,
+        achievements: [],
+        monthlyStats: []
+      },
+      trips: [],
+      preferences: {
+        language: 'en',
+        accessibility: {
+          largeText: false,
+          highContrast: false,
+          voiceAnnouncements: false,
+          reduceMotion: false
+        },
+        notifications: {
+          delays: true,
+          newRoutes: true,
+          achievements: true
+        }
+      }
+    });
+    
+    await newUser.save();
+    
+    // Generate JWT token
+    const token = generateToken({ userId, name: fullName, email });
+    
+    res.status(201).json({
+      success: true,
+      message: 'Account created successfully',
+      token,
+      user: {
+        userId,
+        name: fullName,
+        email,
+        phone,
+        greenScore: newUser.greenScore
+      }
+    });
+  } catch (error) {
+    console.error('Signup error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error during signup'
+    });
+  }
+});
+
 // Traditional login (placeholder)
-router.post('/login', (req, res) => {
-  res.json({ ok: true, message: 'Login placeholder' })
-})
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required'
+      });
+    }
+    
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
+    }
+    
+    // In a real application, you would hash and compare passwords
+    // For demo purposes, we'll accept any password
+    
+    // Generate JWT token
+    const token = generateToken({ userId: user.userId, name: user.name, email: user.email });
+    
+    res.json({
+      success: true,
+      message: 'Login successful',
+      token,
+      user: {
+        userId: user.userId,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        greenScore: user.greenScore
+      }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error during login'
+    });
+  }
+});
+
+
+// Test endpoint to check Google OAuth configuration
+router.get('/test-oauth-config', (req, res) => {
+  res.json({
+    googleClientId: !!process.env.GOOGLE_CLIENT_ID,
+    googleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
+    expectedCallbackUrl: 'http://localhost:4001/api/auth/google/callback',
+    frontendUrl: process.env.FRONTEND_URL,
+    message: 'OAuth configuration check'
+  });
+});
 
 
 // Google OAuth Routes
