@@ -1,8 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "@fortawesome/fontawesome-free/css/all.min.css";
+import { useTheme } from '../context/ThemeContext';
 
 export default function Layout({ children }) {
+  const { darkMode } = useTheme();
+  
   return (
     <>
       {/* 🏗️ Page Content */}
@@ -10,11 +13,11 @@ export default function Layout({ children }) {
       
 
       {/* 🌟 Footer */}
-      <footer>
-        <div className="footer-container">
+      <footer className={darkMode ? 'dark-footer' : ''}>
+        <div className={`footer-container ${darkMode ? 'dark:bg-gray-900 dark:text-white' : ''}`}>
           {/* About */}
           <div className="footer-col">
-            <p className="footer-para">
+            <p className={`footer-para ${darkMode ? 'dark:text-gray-300' : ''}`}>
               Public transport systems are the backbone of urban mobility, 
             providing affordable, safe, and eco-friendly travel for millions of 
             people every day. By reducing traffic congestion, lowering pollution, 

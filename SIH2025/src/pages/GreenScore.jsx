@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useLanguage } from '../context/LanguageContext'
+import { useTheme } from '../context/ThemeContext'
 
 export default function GreenScore() {
   const [selectedPeriod, setSelectedPeriod] = useState('month')
   const [userLevel, setUserLevel] = useState(3)
   const [showLeaderboard, setShowLeaderboard] = useState(false)
   const [animateCounters, setAnimateCounters] = useState(false)
+  const { darkMode } = useTheme()
   
   const userStats = {
     month: {
@@ -114,22 +116,22 @@ export default function GreenScore() {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-secondary">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-secondary'}`}>
       <div className="container-modern section-spacing">
         {/* Hero Header */}
         <div className="text-center mb-12 animate-fade-in-up">
-          <h1 className="text-hero mb-6">
+          <h1 className={`text-hero mb-6 ${darkMode ? 'text-white' : ''}`}>
             Your Green
             <br />
             <span className="text-gradient">Impact</span>
           </h1>
-          <p className="text-body max-w-2xl mx-auto">
+          <p className={`text-body max-w-2xl mx-auto ${darkMode ? 'text-gray-300' : ''}`}>
             Track your environmental impact, compete with the community, and make every journey count
           </p>
         </div>
 
         {/* Level Badge Card */}
-        <div className="card-modern p-8 mb-8 text-center animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <div className={`card-modern p-8 mb-8 text-center animate-fade-in-up ${darkMode ? 'bg-gray-800 text-white border-gray-700' : ''}`} style={{ animationDelay: '0.1s' }}>
           <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-6">
             <div className={`inline-flex px-8 py-4 bg-gradient-to-r ${currentLevel.color} text-white rounded-2xl shadow-modern`}>
               <div className="text-center">
@@ -142,16 +144,16 @@ export default function GreenScore() {
             {nextLevel && (
               <div className="flex-1 max-w-md">
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-600">Progress to {nextLevel.name}</span>
-                  <span className="font-medium text-emerald-600">{Math.round(progressToNext)}%</span>
+                  <span className={`${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Progress to {nextLevel.name}</span>
+                  <span className="font-medium text-emerald-500">{Math.round(progressToNext)}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className={`w-full ${darkMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-full h-3`}>
                   <div 
                     className="h-3 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 transition-all duration-1000 ease-out"
                     style={{ width: `${Math.min(progressToNext, 100)}%` }}
                   ></div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-1`}>
                   {Math.max(0, nextLevel.minCO2 - userStats[selectedPeriod].co2Saved).toFixed(1)} kg CO₂ to go
                 </p>
               </div>
@@ -160,7 +162,7 @@ export default function GreenScore() {
         </div>
         
         {/* Period Selector */}
-        <div className="card-modern p-6 mb-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+        <div className={`card-modern p-6 mb-8 animate-fade-in-up ${darkMode ? 'bg-gray-800 border-gray-700' : ''}`} style={{ animationDelay: '0.2s' }}>
           <div className="flex flex-wrap gap-3 justify-center">
             {[
               { value: 'month', label: 'This Month', icon: '📅' },
@@ -173,7 +175,7 @@ export default function GreenScore() {
                 className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-300 flex items-center gap-2 ${
                   selectedPeriod === period.value
                     ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg transform scale-105'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
+                    : darkMode ? 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:scale-105' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
                 }`}
               >
                 <span>{period.icon}</span>
@@ -185,69 +187,69 @@ export default function GreenScore() {
         
         {/* Main Stats - Animated Counters */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="card-modern p-6 hover-lift animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+          <div className={`card-modern p-6 hover-lift animate-fade-in-up ${darkMode ? 'bg-gray-800 border-gray-700' : ''}`} style={{ animationDelay: '0.3s' }}>
             <div className="flex items-center justify-between mb-4">
               <div className="w-14 h-14 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
                 🌍
               </div>
               <div className="text-right">
-                <div className="text-sm text-gray-500">CO₂ Saved</div>
-                <div className="text-3xl font-bold text-emerald-600">
+                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>CO₂ Saved</div>
+                <div className="text-3xl font-bold text-emerald-500">
                   <AnimatedCounter value={userStats[selectedPeriod].co2Saved} suffix=" kg" />
                 </div>
               </div>
             </div>
-            <div className="text-sm text-gray-600">
-              Equivalent to <span className="font-semibold text-emerald-600">
+            <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              Equivalent to <span className="font-semibold text-emerald-500">
                 <AnimatedCounter value={userStats[selectedPeriod].treesEquivalent} /> trees
               </span> planted
             </div>
           </div>
           
-          <div className="card-modern p-6 hover-lift animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+          <div className={`card-modern p-6 hover-lift animate-fade-in-up ${darkMode ? 'bg-gray-800 border-gray-700' : ''}`} style={{ animationDelay: '0.4s' }}>
             <div className="flex items-center justify-between mb-4">
               <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
                 🚌
               </div>
               <div className="text-right">
-                <div className="text-sm text-gray-500">Trips Taken</div>
-                <div className="text-3xl font-bold text-blue-600">
+                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Trips Taken</div>
+                <div className="text-3xl font-bold text-blue-500">
                   <AnimatedCounter value={userStats[selectedPeriod].trips} />
                 </div>
               </div>
             </div>
-            <div className="text-sm text-gray-600">
-              <span className="font-semibold text-blue-600">
+            <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+              <span className="font-semibold text-blue-500">
                 {formatNumber(userStats[selectedPeriod].distance)}
               </span> km traveled
             </div>
           </div>
           
-          <div className="card-modern p-6 hover-lift animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+          <div className={`card-modern p-6 hover-lift animate-fade-in-up ${darkMode ? 'bg-gray-800 border-gray-700' : ''}`} style={{ animationDelay: '0.5s' }}>
             <div className="flex items-center justify-between mb-4">
               <div className="w-14 h-14 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
                 💰
               </div>
               <div className="text-right">
-                <div className="text-sm text-gray-500">Money Saved</div>
-                <div className="text-3xl font-bold text-purple-600">
+                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Money Saved</div>
+                <div className="text-3xl font-bold text-purple-500">
                   ₹<AnimatedCounter value={userStats[selectedPeriod].moneySaved} />
                 </div>
               </div>
             </div>
-            <div className="text-sm text-gray-600">
+            <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
               Compared to using private transport
             </div>
           </div>
           
-          <div className="card-modern p-6 hover-lift animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+          <div className={`card-modern p-6 hover-lift animate-fade-in-up ${darkMode ? 'bg-gray-800 border-gray-700' : ''}`} style={{ animationDelay: '0.6s' }}>
             <div className="flex items-center justify-between mb-4">
               <div className="w-14 h-14 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg">
                 🏆
               </div>
               <div className="text-right">
-                <div className="text-sm text-gray-500">Community Rank</div>
-                <div className="text-3xl font-bold text-orange-600">
+                <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Community Rank</div>
+                <div className="text-3xl font-bold text-orange-500">
                   #{leaderboard.find(user => user.name === 'You')?.rank || '-'}
                 </div>
               </div>

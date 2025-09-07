@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useLanguage } from '../context/LanguageContext'
+import { useTheme } from '../context/ThemeContext'
 
 const sampleUser = {
   name: 'Alex Johnson',
@@ -78,10 +79,10 @@ const sampleFavorites = [
 
 export default function Profile() {
   const { translate } = useLanguage();
+  const { darkMode } = useTheme();
   const [activeTab, setActiveTab] = useState('rides')
   const [settings, setSettings] = useState({
     notifications: true,
-    darkMode: false,
     dataSaver: false,
     locationTracking: true,
     pushAlerts: true,
@@ -104,16 +105,16 @@ export default function Profile() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-secondary">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-secondary'}`}>
       <div className="container-modern section-spacing">
         {/* Profile Header */}
-        <div className="card-modern p-8 mb-8 animate-fade-in-up">
+        <div className={`card-modern p-8 mb-8 animate-fade-in-up ${darkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
           <div className="flex flex-col lg:flex-row lg:items-center gap-8">
             {/* Avatar Section */}
             <div className="flex flex-col sm:flex-row items-center gap-6">
               <div className="relative">
                 <div className="w-32 h-32 rounded-full bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-500 p-1 shadow-modern">
-                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-4xl font-bold text-gray-600">
+                  <div className={`w-full h-full rounded-full ${darkMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-600'} flex items-center justify-center text-4xl font-bold`}>
                     {userInfo.name.split(' ').map(n => n[0]).join('')}
                   </div>
                 </div>
@@ -125,29 +126,29 @@ export default function Profile() {
               </div>
               
               <div className="text-center sm:text-left">
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">{userInfo.name}</h1>
-                <p className="text-gray-600 mb-1">{userInfo.email}</p>
-                <p className="text-gray-500 text-sm">Member since {new Date(userInfo.joinDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+                <h1 className={`text-3xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-2`}>{userInfo.name}</h1>
+                <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} mb-1`}>{userInfo.email}</p>
+                <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} text-sm`}>Member since {new Date(userInfo.joinDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
               </div>
             </div>
 
             {/* Quick Stats */}
             <div className="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-emerald-50 rounded-2xl p-4 text-center">
-                <div className="text-2xl font-bold text-emerald-600">{userInfo.stats.totalTrips}</div>
-                <div className="text-sm text-gray-600">{translate('totalTrips')}</div>
+              <div className={`${darkMode ? 'bg-emerald-900/30' : 'bg-emerald-50'} rounded-2xl p-4 text-center`}>
+                <div className="text-2xl font-bold text-emerald-500">{userInfo.stats.totalTrips}</div>
+                <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{translate('totalTrips')}</div>
               </div>
-              <div className="bg-blue-50 rounded-2xl p-4 text-center">
-                <div className="text-2xl font-bold text-blue-600">{userInfo.stats.totalDistance}</div>
-                <div className="text-sm text-gray-600">{translate('totalDistance')}</div>
+              <div className={`${darkMode ? 'bg-blue-900/30' : 'bg-blue-50'} rounded-2xl p-4 text-center`}>
+                <div className="text-2xl font-bold text-blue-500">{userInfo.stats.totalDistance}</div>
+                <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{translate('totalDistance')}</div>
               </div>
-              <div className="bg-green-50 rounded-2xl p-4 text-center">
-                <div className="text-2xl font-bold text-green-600">{userInfo.stats.co2Saved}</div>
-                <div className="text-sm text-gray-600">{translate('co2Saved')}</div>
+              <div className={`${darkMode ? 'bg-green-900/30' : 'bg-green-50'} rounded-2xl p-4 text-center`}>
+                <div className="text-2xl font-bold text-green-500">{userInfo.stats.co2Saved}</div>
+                <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{translate('co2Saved')}</div>
               </div>
-              <div className="bg-purple-50 rounded-2xl p-4 text-center">
-                <div className="text-2xl font-bold text-purple-600">₹{userInfo.stats.moneySaved}</div>
-                <div className="text-sm text-gray-600">{translate('moneySaved')}</div>
+              <div className={`${darkMode ? 'bg-purple-900/30' : 'bg-purple-50'} rounded-2xl p-4 text-center`}>
+                <div className="text-2xl font-bold text-purple-500">₹{userInfo.stats.moneySaved}</div>
+                <div className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>{translate('moneySaved')}</div>
               </div>
             </div>
           </div>
@@ -156,7 +157,7 @@ export default function Profile() {
         {/* Tab Navigation */}
         <div className="mb-8">
           {/* Desktop Tabs */}
-          <div className="hidden sm:flex card-modern p-2 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+          <div className={`hidden sm:flex card-modern p-2 animate-fade-in-up ${darkMode ? 'bg-gray-800 border-gray-700' : ''}`} style={{ animationDelay: '0.1s' }}>
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -164,14 +165,14 @@ export default function Profile() {
                 className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 rounded-2xl font-semibold transition-all duration-300 ${
                   activeTab === tab.id
                     ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg'
-                    : 'text-gray-600 hover:bg-gray-50'
+                    : darkMode ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-50'
                 }`}
               >
                 <span className="text-xl">{tab.icon}</span>
                 <span>{tab.label}</span>
                 {tab.count && (
                   <span className={`text-xs px-2 py-1 rounded-full ${
-                    activeTab === tab.id ? 'bg-white/20' : 'bg-gray-200'
+                    activeTab === tab.id ? 'bg-white/20' : darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200'
                   }`}>
                     {tab.count}
                   </span>
@@ -181,7 +182,7 @@ export default function Profile() {
           </div>
 
           {/* Mobile Bottom Navigation */}
-          <div className="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+          <div className={`sm:hidden fixed bottom-0 left-0 right-0 ${darkMode ? 'bg-gray-900 border-t border-gray-800' : 'bg-white border-t border-gray-200'} z-40`}>
             <div className="flex">
               {tabs.map((tab) => (
                 <button
@@ -189,14 +190,14 @@ export default function Profile() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex-1 flex flex-col items-center justify-center py-3 px-2 transition-all duration-300 ${
                     activeTab === tab.id
-                      ? 'text-emerald-600 bg-emerald-50'
-                      : 'text-gray-500'
+                      ? darkMode ? 'text-emerald-400 bg-emerald-900/30' : 'text-emerald-600 bg-emerald-50'
+                      : darkMode ? 'text-gray-400' : 'text-gray-500'
                   }`}
                 >
                   <span className="text-lg mb-1">{tab.icon}</span>
                   <span className="text-xs font-medium">{tab.label}</span>
                   {tab.count && (
-                    <span className="absolute top-1 right-1/2 transform translate-x-1/2 text-xs bg-emerald-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className={`absolute top-1 right-1/2 transform translate-x-1/2 text-xs ${darkMode ? 'bg-emerald-600' : 'bg-emerald-500'} text-white rounded-full w-5 h-5 flex items-center justify-center`}>
                       {tab.count}
                     </span>
                   )}
@@ -211,8 +212,8 @@ export default function Profile() {
           {/* My Rides Tab */}
           {activeTab === 'rides' && (
             <div className="space-y-6">
-              <div className="card-modern p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+              <div className={`card-modern p-6 ${darkMode ? 'bg-gray-800 border-gray-700' : ''}`}>
+                <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'} mb-6 flex items-center gap-3`}>
                   🚌 {translate('myRides')}
                 </h2>
                 <div className="space-y-4">
