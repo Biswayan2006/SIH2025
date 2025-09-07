@@ -20,77 +20,17 @@
 .splash-container {
   position: relative;
   width: 300px;
-  height: 200px;
+  height: auto;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.animation-container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-}
-
-.splash-svg {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.route-line {
-  stroke-dasharray: 500;
-  stroke-dashoffset: 500;
-  animation: draw-line 1.5s ease-in-out forwards;
-}
-
-@keyframes draw-line {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-.bus-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  animation: move-bus 2s ease-in-out forwards;
-  opacity: 0;
-  width: 100px;
-  height: 60px;
-}
-
-.bus-outline-animation {
-  width: 100%;
-  height: 100%;
-}
-
-.bus-icon {
-  width: 40px;
-  height: 30px;
-}
-
-@keyframes move-bus {
-  0% {
-    transform: translate(20px, 100px) scale(0.8);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(280px, 50px) scale(0.8);
-    opacity: 1;
-  }
-}
-
-.destination-marker {
-  position: absolute;
-  top: 35px;
-  left: 265px;
-  opacity: 0;
-  animation: show-marker 0.5s 1.5s forwards;
+.smooth-ride-gif {
+  width: 280px;
+  height: auto;
+  position: relative;
+  z-index: 10;
 }
 
 @keyframes show-marker {
@@ -99,29 +39,7 @@
   }
 }
 
-.splash-logo {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  opacity: 0;
-  animation: show-logo 1s 2s forwards;
-  z-index: 10;
-}
 
-@keyframes show-logo {
-  0% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
 
 .pulse-animation {
   animation: pulse 2s infinite;
