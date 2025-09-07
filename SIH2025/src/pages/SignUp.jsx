@@ -123,6 +123,7 @@ const SignUp = () => {
     } catch (error) {
       console.error('Google signup failed:', error);
       setApiError('Google signup failed. Please try again.');
+
       setLoading(false);
     }
   };
