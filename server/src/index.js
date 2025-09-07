@@ -79,6 +79,8 @@ if (isMongoConnected) {
   app.use('/api/buses', require('./routes/buses'))
   app.use('/api/green-score', require('./routes/greenScore'))
   app.use('/api/analytics', require('./routes/analytics'))
+  app.use('/api/notifications', require('./routes/notifications'))
+  app.use('/api/maintenance', require('./routes/maintenance'))
 } else {
   console.log('📋 Running in demo mode with mock data')
   app.use('/api/auth', require('./routes/auth'))
@@ -87,6 +89,8 @@ if (isMongoConnected) {
   app.use('/api/buses', require('./routes/busesDemo'))
   app.use('/api/green-score', require('./routes/greenScore'))
   app.use('/api/analytics', require('./routes/analytics'))
+  app.use('/api/notifications', require('./routes/notifications'))
+  app.use('/api/maintenance', require('./routes/maintenance'))
 }
 
 // Create HTTP server and Socket.IO

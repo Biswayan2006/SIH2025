@@ -1,0 +1,7 @@
+{
+  "type": "announcement",
+  "title": "Test Notification",
+  "message": "This is a test notification created via API",
+  "severity": "low",
+  "targetAudience": "all"
+}

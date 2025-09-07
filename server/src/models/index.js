@@ -187,10 +187,89 @@ const analyticsSchema = new mongoose.Schema({
   }
 }, { timestamps: true })
 
+// Notifications Schema
+const notificationSchema = new mongoose.Schema({
+  notificationId: { type: String, required: true, unique: true },
+  type: {
+    type: String,
+    enum: ['delay', 'cancellation', 'route_change', 'announcement', 'maintenance'],
+    required: true
+  },
+  title: { type: String, required: true },
+  message: { type: String, required: true },
+  route: String, // Optional - for route-specific notifications
+  severity: {
+    type: String,
+    enum: ['low', 'medium', 'high', 'critical'],
+    default: 'medium'
+  },
+  targetAudience: {
+    type: String,
+    enum: ['all', 'route_users', 'admins'],
+    default: 'all'
+  },
+  isActive: { type: Boolean, default: true },
+  expiresAt: Date,
+  metadata: {
+    createdBy: String,
+    affectedRoutes: [String],
+    estimatedDuration: Number // in minutes
+  }
+}, { timestamps: true })
+
+// Maintenance Schema
+const maintenanceSchema = new mongoose.Schema({
+  maintenanceId: { type: String, required: true, unique: true },
+  busId: { type: String, required: true },
+  type: {
+    type: String,
+    enum: ['routine', 'repair', 'inspection', 'cleaning', 'emergency', 'upgrade'],
+    required: true
+  },
+  title: String,
+  description: String,
+  scheduledDate: { type: Date, required: true },
+  completedDate: Date,
+  status: {
+    type: String,
+    enum: ['scheduled', 'in-progress', 'completed', 'cancelled', 'delayed'],
+    default: 'scheduled'
+  },
+  priority: {
+    type: String,
+    enum: ['low', 'medium', 'high', 'urgent'],
+    default: 'medium'
+  },
+  cost: Number,
+  estimatedDuration: Number, // in hours
+  actualDuration: Number, // in hours
+  technician: {
+    name: String,
+    id: String,
+    contact: String,
+    specialization: String
+  },
+  parts: [{
+    name: String,
+    cost: Number,
+    quantity: Number,
+    supplier: String
+  }],
+  notes: String,
+  images: [String], // URLs to maintenance images
+  warranty: {
+    covered: { type: Boolean, default: false },
+    expiryDate: Date,
+    provider: String
+  }
+}, { timestamps: true })
+
 module.exports = {
   Bus: mongoose.model('Bus', busSchema),
   Route: mongoose.model('Route', routeSchema),
   Feedback: mongoose.model('Feedback', feedbackSchema),
   User: mongoose.model('User', userSchema),
-  Analytics: mongoose.model('Analytics', analyticsSchema)
+  Analytics: mongoose.model('Analytics', analyticsSchema),
+  Notification: mongoose.model('Notification', notificationSchema),
+  Maintenance: mongoose.model('Maintenance', maintenanceSchema)
 }
