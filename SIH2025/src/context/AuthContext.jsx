@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
   // Verify token with backend
   const verifyToken = async (token) => {
     try {
-      const response = await fetch('http://localhost:4001/api/auth/verify-token', {
+      const response = await fetch('http://localhost:4002/api/auth/verify-token', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const token = localStorage.getItem('authToken')
       if (token) {
-        await fetch('http://localhost:4001/api/auth/logout', {
+        await fetch('http://localhost:4002/api/auth/logout', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { useTheme } from '../context/ThemeContext'
+import { useAuth } from '../context/AuthContext'
+
+import { GoogleLogin } from "@react-oauth/google"
 
 // Import images for carousel
 import bus1 from '../assets/bus_1.jpeg'
@@ -40,6 +43,8 @@ const stats = [
 const Home = () => {
   const { translate } = useLanguage()
   const { darkMode } = useTheme()
+  const { login } = useAuth()
+  const location = useLocation()
   const [searchQuery, setSearchQuery] = useState('')
   const [currentStat, setCurrentStat] = useState(0)
   const [isSearching, setIsSearching] = useState(false)
@@ -62,12 +67,37 @@ const Home = () => {
       setCurrentImage((prev) => (prev + 1) % carouselImages.length)
     }, 5000) // Change image every 5 seconds
     
+    // Handle OAuth redirect with token and user data in URL
+    const urlParams = new URLSearchParams(location.search)
+    const token = urlParams.get('token')
+    const userDataString = urlParams.get('user')
+    const error = urlParams.get('error')
+    
+    if (token && userDataString) {
+      try {
+        console.log('Found token and user data in URL parameters')
+        const userData = JSON.parse(decodeURIComponent(userDataString))
+        console.log('Parsed user data:', userData)
+        login(userData, token)
+        
+        // Clean up URL parameters after successful login
+        window.history.replaceState({}, document.title, '/')
+      } catch (error) {
+        console.error('Error parsing user data:', error)
+      }
+    } else if (error) {
+      console.error('Authentication error:', error)
+      
+      // Clean up URL parameters after error
+      window.history.replaceState({}, document.title, '/')
+    }
+    
     return () => {
       window.removeEventListener('scroll', handleScroll)
       clearInterval(statInterval)
       clearInterval(imageInterval)
     }
-  }, [])
+  }, [location.search, login])
 
   const handleSearch = async (e) => {
     e.preventDefault()
@@ -81,6 +111,11 @@ const Home = () => {
   }
 
   return (
+    <>
+        <GoogleLogin onSuccess = {(credentialResponse) => console.log(credentialResponse)}
+        onError ={() => console.log("Login failed")}/>
+    
+
     <div className="min-h-screen overflow-hidden">
       {/* Modern Hero Section */}
       <section className="relative section-spacing">
@@ -359,6 +394,7 @@ const Home = () => {
         </div>
       </section>
     </div>
+    </>
   )
 }
 
