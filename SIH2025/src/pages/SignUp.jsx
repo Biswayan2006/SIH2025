@@ -119,13 +119,7 @@ const SignUp = () => {
     setApiError('');
     try {
       // Redirect to backend Google OAuth endpoint
-      console.log('Redirecting to Google OAuth...');
-      const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:4002'; // Backend server URL
-      
-      // Add a small delay to show loading state before redirect
-      setTimeout(() => {
-        window.location.href = `${backendUrl}/api/auth/google`;
-      }, 500);
+      window.location.href = 'http://localhost:4001/api/auth/google';
     } catch (error) {
       console.error('Google signup failed:', error);
       setApiError('Google signup failed. Please try again.');

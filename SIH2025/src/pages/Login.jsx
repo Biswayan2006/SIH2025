@@ -19,6 +19,41 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
+  // Check for error parameters in URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const errorParam = params.get('error');
+    
+    if (errorParam) {
+      let errorMessage = 'Authentication failed';
+      
+      // Map error codes to user-friendly messages
+      switch(errorParam) {
+        case 'authentication_failed':
+          errorMessage = 'Google authentication failed. Please try again.';
+          break;
+        case 'server_error':
+          errorMessage = 'Server error occurred during authentication.';
+          break;
+        case 'invalid_response':
+          errorMessage = 'Invalid response from authentication server.';
+          break;
+        case 'missing_data':
+          errorMessage = 'Missing authentication data.';
+          break;
+        case 'token_generation_failed':
+          errorMessage = 'Failed to generate authentication token.';
+          break;
+        default:
+          errorMessage = `Authentication error: ${errorParam}`;
+      }
+      
+      setError(errorMessage);
+      // Clear loading state
+      setLoading(false);
+    }
+  }, [location.search, setLoading]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -64,14 +99,14 @@ const Login = () => {
     // Set loading state
     setIsLoading(true);
     
-    // Redirect to backend Google OAuth endpoint
-    console.log('Redirecting to Google OAuth...');
-    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:4002'; // Backend server URL
+    // Redirect directly to Google OAuth endpoint
+    console.log('Redirecting to Google OAuth...')
+    const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:4001' // Backend server URL
     
     try {
       // Add a small delay to show loading state before redirect
       setTimeout(() => {
-        window.location.href = `${backendUrl}/api/auth/google`;
+        window.location.href = `${backendUrl}/api/auth/google`
       }, 500);
     } catch (error) {
       console.error('Failed to redirect to Google OAuth:', error);
@@ -235,3 +270,4 @@ const Login = () => {
 };
 
 export default Login;
+

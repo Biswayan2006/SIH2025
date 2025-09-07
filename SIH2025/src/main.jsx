@@ -11,6 +11,7 @@ import GreenScore from './pages/GreenScore.jsx'
 import Feedback from './pages/Feedback.jsx'
 import Login from './pages/Login.jsx'
 import SignUp from './pages/SignUp.jsx'
+import AuthSuccess from './pages/AuthSuccess.jsx'
 import Accessibility from './pages/Accessibility.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
 import Profile from './pages/Profile.jsx'
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
       { path: 'feedback', element: <Feedback /> },
       { path: 'login', element: <Login /> },
       { path: 'signup', element: <SignUp /> },
+      { path: 'auth/success', element: <AuthSuccess /> },
       { path: 'accessibility', element: <Accessibility /> },
       { path: 'admin', element: <AdminDashboard /> },
     ],

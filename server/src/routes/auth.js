@@ -166,12 +166,12 @@ router.get('/google/callback',
       if (err) {
         console.error('❌ OAuth authentication error:', err)
         const errorMsg = encodeURIComponent(err.message || 'authentication_error')
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/?error=${errorMsg}`)
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/auth/success?error=${errorMsg}`)
       }
       
       if (!user) {
         console.error('❌ No user returned from Google OAuth:', info)
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/?error=authentication_failed`)
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/auth/success?error=authentication_failed`)
       }
 
       try {
@@ -186,13 +186,13 @@ router.get('/google/callback',
           userId: user.userId
         }))
         
-        // Redirect directly to frontend home page with token and user data
+        // Redirect to frontend with token and user data
         const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5174'
-        console.log('🔗 Redirecting directly to home page:', frontendUrl)
-        res.redirect(`${frontendUrl}/?token=${token}&user=${encodedUser}`)
+        console.log('🔗 Redirecting to:', frontendUrl + '/auth/success')
+        res.redirect(`${frontendUrl}/auth/success?token=${token}&user=${encodedUser}`)
       } catch (error) {
         console.error('❌ Token generation error:', error)
-        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/?error=token_generation_failed`)
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5174'}/auth/success?error=token_generation_failed`)
       }
     })(req, res, next)
   }
