@@ -1,0 +1,21 @@
+.bus-outline {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.bus-outline svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Dark navy background like in the image */
+.login-page {
+  background-color: #1a1e2e;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

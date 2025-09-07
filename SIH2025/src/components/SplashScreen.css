@@ -20,12 +20,26 @@
 .splash-container {
   position: relative;
   width: 300px;
-  height: 150px;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.animation-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
 
 .splash-svg {
   width: 100%;
   height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .route-line {
@@ -40,61 +54,92 @@
   }
 }
 
-.bus-icon {
-  offset-path: path('M20,100 C100,20 200,130 280,50');
-  animation: move-bus 1.5s ease-in-out forwards;
+.bus-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: move-bus 2s ease-in-out forwards;
   opacity: 0;
+  width: 100px;
+  height: 60px;
+}
+
+.bus-outline-animation {
+  width: 100%;
+  height: 100%;
+}
+
+.bus-icon {
+  width: 40px;
+  height: 30px;
 }
 
 @keyframes move-bus {
   0% {
-    offset-distance: 0%;
+    transform: translate(20px, 100px) scale(0.8);
     opacity: 1;
   }
   100% {
-    offset-distance: 100%;
+    transform: translate(280px, 50px) scale(0.8);
     opacity: 1;
   }
 }
 
-.map-pin {
+.destination-marker {
+  position: absolute;
+  top: 35px;
+  left: 265px;
   opacity: 0;
-  animation: show-pin 0.5s 1.5s forwards;
+  animation: show-marker 0.5s 1.5s forwards;
 }
 
-@keyframes show-pin {
+@keyframes show-marker {
   to {
     opacity: 1;
   }
 }
 
 .splash-logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0.8);
+  position: relative;
+  width: 80px;
+  height: 80px;
   opacity: 0;
-  width: 100px;
-  height: 100px;
   animation: show-logo 1s 2s forwards;
+  z-index: 10;
 }
 
 @keyframes show-logo {
   0% {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
+    transform: scale(0.8);
   }
   50% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.2);
+    transform: scale(1.2);
   }
   100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: scale(1);
   }
 }
 
-/* Hide SVG elements when logo is shown */
-.splash-screen.fade-out .splash-svg {
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(46, 204, 113, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+  }
+}
+
+/* Hide animation elements when fading out */
+.splash-screen.fade-out .animation-container {
   display: none;
 }

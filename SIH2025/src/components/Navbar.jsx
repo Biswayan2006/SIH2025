@@ -98,11 +98,10 @@ export default function Navbar() {
             alt="logo"
             className="h-12 w-12 rounded-full border-2 border-cyan-500 shadow-md"
           />
-          <span className="hidden sm:block font-bold text-xl text-gray-900 dark:text-white">TransitTrack</span>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex gap-6 lg:gap-12 items-center">
+        <div className="hidden md:flex gap-4 lg:gap-8 items-center">
           {navItems.map(item => (
             <NavLink key={item.to} to={item.to} end={item.to === '/'} className={linkClass}>
               {item.label}
@@ -114,7 +113,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 md:gap-3">
           <LanguageSelector />
           <ThemeToggle />
-          <NavLink to="/login" className="hidden sm:inline-block bg-cyan-500 hover:bg-cyan-600 text-white px-2 py-1 text-sm rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition">
+          <NavLink to="/login" className="inline-block bg-cyan-500 hover:bg-cyan-600 text-white px-2 py-1 text-sm rounded-lg font-medium shadow-md hover:shadow-cyan-400/40 transition">
             {translate('login')}
           </NavLink>
         </div>
