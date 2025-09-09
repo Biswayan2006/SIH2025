@@ -50,25 +50,34 @@ export default function Login() {
     }
   }, [location.search, setLoading]);
 
+  const [selectedRole, setSelectedRole] = useState('user');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:4001/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        login(data.user, data.token);
-        navigate("/");
+      // For demo purposes, we'll simulate a successful login with the selected role
+      // In a real app, the role would come from the backend
+      const mockUser = {
+        id: 'user123',
+        email: formData.email,
+        name: formData.email.split('@')[0],
+        role: selectedRole,
+      };
+      
+      // Generate a mock token
+      const mockToken = 'mock-jwt-token-' + Date.now();
+      
+      // Call the login function from AuthContext
+      login(mockUser, mockToken);
+      
+      // Navigate to appropriate dashboard based on role
+      if (selectedRole === 'driver') {
+        navigate('/driver');
+      } else if (selectedRole === 'admin') {
+        navigate('/admin');
       } else {
-        setError(data.message || "Login failed");
+        navigate('/');
       }
     } catch (err) {
       setError("Login error: " + err.message);
@@ -180,6 +189,33 @@ export default function Login() {
                 } rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
                 placeholder="••••••••"
               />
+            </div>
+            
+            {/* Role Selection */}
+            <div>
+              <label
+                htmlFor="role"
+                className={`block text-sm font-medium ${
+                  darkMode ? "text-gray-300" : "text-gray-700"
+                }`}
+              >
+                Role
+              </label>
+              <select
+                id="role"
+                name="role"
+                value={selectedRole}
+                onChange={(e) => setSelectedRole(e.target.value)}
+                className={`mt-1 appearance-none block w-full px-3 py-2 border ${
+                  darkMode
+                    ? "border-gray-600 bg-gray-700 text-white"
+                    : "border-gray-300 text-gray-900"
+                } rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
+              >
+                <option value="user">Regular User</option>
+                <option value="driver">Driver</option>
+                <option value="admin">Admin</option>
+              </select>
             </div>
 
             {/* Remember + Forgot */}

@@ -1,17 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
-import { useAuth } from '../context/AuthContext';
-import AuthBackground from '../components/AuthBackground';
 
 const SignUp = () => {
   const { translate } = useLanguage();
   const { darkMode } = useTheme();
-  const { login } = useAuth();
   const navigate = useNavigate();
-  
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -22,7 +18,6 @@ const SignUp = () => {
   });
   const [loading, setLoading] = useState(false);
   const [passwordError, setPasswordError] = useState('');
-  const [apiError, setApiError] = useState('');
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   
   // CSS for animations
@@ -61,14 +56,10 @@ const SignUp = () => {
     if (name === 'password' || name === 'confirmPassword') {
       setPasswordError('');
     }
-    if (name === 'email') {
-      setApiError('');
-    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setApiError('');
 
     if (formData.password !== formData.confirmPassword) {
       setPasswordError('Passwords do not match');
@@ -76,229 +67,328 @@ const SignUp = () => {
     }
 
     if (!formData.agreeTerms) {
-      setApiError('Please agree to the terms and conditions');
+      alert('Please agree to the terms and conditions');
       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4001/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          fullName: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
-          password: formData.password
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Login the user automatically
-        login(data.user, data.token);
-        navigate('/');
-      } else {
-        setApiError(data.message || 'Signup failed. Please try again.');
-      }
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      navigate('/login');
     } catch (error) {
       console.error('Signup failed:', error);
-      setApiError('Network error. Please check your connection and try again.');
+      alert('Signup failed. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Google Sign Up handler
-  const handleGoogleSignUp = async () => {
-    setLoading(true);
-    setApiError('');
-    try {
-      // Redirect to backend Google OAuth endpoint
-      window.location.href = 'http://localhost:4001/api/auth/google';
-    } catch (error) {
-      console.error('Google signup failed:', error);
-      setApiError('Google signup failed. Please try again.');
-
-      setLoading(false);
-    }
+  // Car animation component
+  const CarAnimation = () => {
+    return (
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Sunset sky background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#ff9e7d] via-[#ff7b54] to-[#5e2e7a]">
+          {/* Stars appearing as it gets darker */}
+          {[...Array(50)].map((_, i) => {
+            const size = Math.random() * 2 + 1;
+            const animationDuration = Math.random() * 3 + 2;
+            return (
+              <div 
+                key={i}
+                className="absolute rounded-full bg-white"
+                style={{
+                  width: `${size}px`,
+                  height: `${size}px`,
+                  top: `${Math.random() * 40}%`,
+                  left: `${Math.random() * 100}%`,
+                  opacity: Math.random() * 0.7 + 0.3,
+                  animation: `twinkle ${animationDuration}s infinite ease-in-out`
+                }}
+              />
+            );
+          })}
+        </div>
+        
+        {/* Sun/Moon */}
+        <div className="absolute top-[15%] right-[15%] w-[100px] h-[100px] rounded-full bg-gradient-to-r from-yellow-200 to-yellow-400 shadow-lg shadow-yellow-300/50" />
+        
+        {/* Highway */}
+        <div className="absolute bottom-0 w-full h-[30%] bg-[#1a1a1a]">
+          {/* Road markings */}
+          <div className="absolute top-0 w-full h-[10px] bg-[#444]" />
+          <div className="absolute top-1/2 w-full h-[10px] flex">
+            {[...Array(20)].map((_, i) => (
+              <motion.div 
+                key={i}
+                className="h-full w-[50px] bg-yellow-400 mx-[50px]"
+                initial={{ x: "100vw" }}
+                animate={{ x: "-100vw" }}
+                transition={{ 
+                  repeat: Infinity, 
+                  duration: 3,
+                  ease: "linear",
+                  delay: i * 0.2 % 2
+                }}
+              />
+            ))}
+          </div>
+        </div>
+        
+        {/* Moving Cars */}
+        {[...Array(3)].map((_, i) => {
+          const lane = i % 3;
+          const speed = 8 + (lane * 2);
+          const delay = i * 2;
+          const carColors = ['#4361ee', '#3a0ca3', '#4cc9f0'];
+          
+          return (
+            <motion.div 
+              key={i}
+              className="absolute h-[40px] w-[80px]"
+              style={{
+                bottom: `${10 + (lane * 5)}%`,
+                zIndex: 10 - lane
+              }}
+              initial={{ x: "-100px" }}
+              animate={{ x: "calc(100vw + 50px)" }}
+              transition={{ 
+                duration: speed, 
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "linear",
+                delay: delay
+              }}
+            >
+              {/* Car body */}
+              <div className="relative h-full w-full">
+                <div 
+                  className="absolute bottom-0 h-[20px] w-full rounded-t-lg rounded-b-sm shadow-lg"
+                  style={{ backgroundColor: carColors[lane % carColors.length] }}
+                />
+                <div className="absolute bottom-[20px] h-[15px] w-[60px] left-[10px] bg-[#111] rounded-t-lg" />
+                
+                {/* Windows */}
+                <div className="absolute bottom-[22px] left-[15px] right-[15px] h-[10px] flex space-x-2">
+                  <div className="flex-1 bg-[#4cc9f0] rounded-sm opacity-70" />
+                  <div className="flex-1 bg-[#4cc9f0] rounded-sm opacity-70" />
+                </div>
+                
+                {/* Wheels */}
+                <div className="absolute bottom-[-5px] left-[15px] h-[10px] w-[10px] bg-[#333] rounded-full border-2 border-gray-400" />
+                <div className="absolute bottom-[-5px] right-[15px] h-[10px] w-[10px] bg-[#333] rounded-full border-2 border-gray-400" />
+                
+                {/* Lights */}
+                <div className="absolute bottom-[5px] right-0 h-[5px] w-[3px] bg-red-500" />
+                <div className="absolute bottom-[5px] left-0 h-[5px] w-[3px] bg-yellow-300" />
+              </div>
+            </motion.div>
+          );
+        })}
+        
+        {/* Mountain Silhouettes */}
+        <div className="absolute bottom-[30%] w-full">
+          <svg viewBox="0 0 1440 320" className="w-full">
+            <path 
+              fill="#2b2d42" 
+              fillOpacity="0.8"
+              d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,202.7C672,203,768,181,864,181.3C960,181,1056,203,1152,208C1248,213,1344,203,1392,197.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+            ></path>
+          </svg>
+        </div>
+      </div>
+    );
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <AuthBackground darkMode={darkMode} />
+    <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Animated Transportation Background */}
+      <CarAnimation />
       
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-md w-full space-y-8 relative z-20"
-      >
-        <div className={`${darkMode ? 'bg-gray-800/95' : 'bg-white/95'} backdrop-blur-lg shadow-2xl rounded-xl p-8 border ${darkMode ? 'border-gray-700' : 'border-gray-200'}`}>
-          <div className="text-center mb-8">
-            <div className="flex justify-center mb-4">
-              <img
-                src="/src/assets/image.png"
-                alt="TransitTrack Logo"
-                className="h-16 w-16 rounded-full border-2 border-cyan-500 shadow-lg"
-              />
+      {/* Interactive cursor effect */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(300px circle at ${cursorPos.x}px ${cursorPos.y}px, rgba(76,201,240,0.15), transparent 30%)`,
+        }}
+      />
+      
+      {/* Signup Card */}
+      <div className="w-full max-w-md z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className={`w-full max-w-md space-y-6 ${darkMode ? 'bg-[#1a1a3a]/80' : 'bg-white/90'} backdrop-blur-lg rounded-2xl p-8 border ${darkMode ? 'border-[#4361ee]/30' : 'border-gray-200'} shadow-xl`}
+        >
+          <div className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <span className="text-white text-2xl">🚗</span>
             </div>
-            <h2 className={`text-3xl font-extrabold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-              {translate('createAccount')}
+            <h2 className={`text-2xl font-bold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+              {translate('joinTransitConnect')}
             </h2>
-            <p className={`mt-2 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-              {translate('joinCommunity')}
+            <p className={`${darkMode ? 'text-[#4cc9f0]' : 'text-gray-600'} mt-2`}>
+              {translate('alreadyHaveAccount')}{' '}
+              <button
+                onClick={() => navigate('/login')}
+                className={`font-medium ${darkMode ? 'text-[#90e0ef] hover:text-white' : 'text-blue-600 hover:text-blue-800'} focus:outline-none focus:underline transition duration-150 ease-in-out`}
+              >
+                {translate('signIn')}
+              </button>
             </p>
           </div>
 
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* API Error Display */}
-            {apiError && (
-              <div className="rounded-md bg-red-50 p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-red-800">{apiError}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-            {/* Full Name */}
+          {/* Form */}
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="fullName" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                {translate('fullName')}
-              </label>
-              <div className="mt-1">
+              <label htmlFor="fullName" className={`block text-sm ${darkMode ? 'text-[#90e0ef]' : 'text-gray-600'} mb-1`}>
+                  {translate('fullName')}
+                </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#4cc9f0]">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                  </svg>
+                </span>
                 <input
                   id="fullName"
                   name="fullName"
                   type="text"
-                  autoComplete="name"
                   required
+                  className={`w-full pl-10 px-3 py-2 ${darkMode ? 'bg-[#1a1a3a]/50 border-[#4361ee]/30 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'} border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4cc9f0]`}
+                  placeholder="John Doe"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${darkMode ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400' : 'border-gray-300 placeholder-gray-400 text-gray-900'} rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                  placeholder={translate('enterFullName')}
                 />
               </div>
             </div>
 
-            {/* Email */}
             <div>
-              <label htmlFor="email" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                {translate('email')}
+                <label htmlFor="email" className={`block text-sm ${darkMode ? 'text-[#90e0ef]' : 'text-gray-600'} mb-1`}>
+                    {translate('emailAddress')}
+                  </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#4cc9f0]">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                  </span>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    className={`w-full pl-10 px-3 py-2 ${darkMode ? 'bg-[#1a1a3a]/50 border-[#4361ee]/30 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'} border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4cc9f0]`}
+                    placeholder="you@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </div>
+            </div>
+
+            <div>
+              <label htmlFor="phone" className={`block text-sm ${darkMode ? 'text-[#90e0ef]' : 'text-gray-600'} mb-1`}>
+                {translate('phoneNumber')}
               </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${darkMode ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400' : 'border-gray-300 placeholder-gray-400 text-gray-900'} rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                  placeholder={translate('enterEmail')}
-                />
-              </div>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                autoComplete="tel"
+                required
+                className={`w-full px-3 py-2 ${darkMode ? 'bg-[#1F1F1F] border-gray-600 text-white' : 'bg-gray-50 border-gray-300 text-gray-900'} border rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                placeholder="+91 9876543210"
+                value={formData.phone}
+                onChange={handleChange}
+              />
             </div>
 
-            {/* Phone */}
             <div>
-              <label htmlFor="phone" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                {translate('phone')}
-              </label>
-              <div className="mt-1">
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  autoComplete="tel"
-                  required
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${darkMode ? 'border-gray-600 bg-gray-700 text-white placeholder-gray-400' : 'border-gray-300 placeholder-gray-400 text-gray-900'} rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-                  placeholder={translate('enterPhone')}
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              <label htmlFor="password" className="block text-sm text-[#90e0ef] mb-1">
                 {translate('password')}
               </label>
-              <div className="mt-1">
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#4cc9f0]">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  </svg>
+                </span>
                 <input
                   id="password"
                   name="password"
                   type="password"
                   autoComplete="new-password"
                   required
+                  className="w-full pl-10 px-3 py-2 bg-[#1a1a3a]/50 border border-[#4361ee]/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4cc9f0]"
+                  placeholder="••••••••"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${passwordError ? 'border-red-300' : darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 text-gray-900'} rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${passwordError ? 'focus:ring-red-500 focus:border-red-500' : ''}`}
-                  placeholder={translate('createPassword')}
                 />
               </div>
             </div>
 
-            {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className={`block text-sm font-medium ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
+              <label htmlFor="confirmPassword" className="block text-sm text-[#90e0ef] mb-1">
                 {translate('confirmPassword')}
               </label>
-              <div className="mt-1">
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#4cc9f0]">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  </svg>
+                </span>
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
                   type="password"
                   autoComplete="new-password"
                   required
+                  className="w-full pl-10 px-3 py-2 bg-[#1a1a3a]/50 border border-[#4361ee]/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4cc9f0]"
+                  placeholder="••••••••"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${passwordError ? 'border-red-300' : darkMode ? 'border-gray-600 bg-gray-700 text-white' : 'border-gray-300 text-gray-900'} rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 ${passwordError ? 'focus:ring-red-500 focus:border-red-500' : ''}`}
-                  placeholder={translate('confirmPassword')}
                 />
-                {passwordError && (
-                  <p className="mt-2 text-sm text-red-600">{passwordError}</p>
-                )}
+              </div>
+              {passwordError && (
+                <p className="mt-1 text-sm text-red-400">{passwordError}</p>
+              )}
+            </div>
+
+            <div className="flex items-center">
+              <div className="relative flex items-start">
+                <div className="flex items-center h-5">
+                  <input
+                    id="agreeTerms"
+                    name="agreeTerms"
+                    type="checkbox"
+                    required
+                    className="h-4 w-4 text-[#4361ee] focus:ring-[#4cc9f0] border-[#4361ee]/30 bg-[#1a1a3a]/50 rounded"
+                    checked={formData.agreeTerms}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="ml-3 text-sm">
+                  <label htmlFor="agreeTerms" className="text-[#90e0ef]">
+                    {translate('agreeToTerms')}{' '}
+                    <a href="#" className="text-[#4cc9f0] hover:text-white underline">
+                      {translate('termsOfService')}
+                    </a>{' '}
+                    {translate('and')}{' '}
+                    <a href="#" className="text-[#4cc9f0] hover:text-white underline">
+                      {translate('privacyPolicy')}
+                    </a>
+                  </label>
+                </div>
               </div>
             </div>
 
-            {/* Terms and Conditions */}
-            <div className="flex items-center">
-              <input
-                id="agreeTerms"
-                name="agreeTerms"
-                type="checkbox"
-                checked={formData.agreeTerms}
-                onChange={handleChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="agreeTerms" className={`ml-2 block text-sm ${darkMode ? 'text-gray-300' : 'text-gray-900'}`}>
-                {translate('agreeToTerms')}{' '}
-                <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
-                  {translate('termsAndConditions')}
-                </a>
-              </label>
-            </div>
-
-            {/* Submit Button */}
-            <motion.button
+            <button
               type="submit"
+              className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-lg text-sm font-medium text-white bg-gradient-to-r from-[#4361ee] to-[#4cc9f0] hover:from-[#3a56d4] hover:to-[#43b4d9] focus:outline-none focus:ring-2 focus:ring-[#4cc9f0] transform transition-all duration-200 hover:scale-[1.02] disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100`}
               disabled={loading}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               {loading ? (
                 <span className="flex items-center">
@@ -316,40 +406,10 @@ const SignUp = () => {
                   {translate('signUp')}
                 </span>
               )}
-            </motion.button>
-
-            {/* Google Sign Up Button */}
-            <motion.button
-              type="button"
-              onClick={handleGoogleSignUp}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={`w-full flex justify-center items-center py-3 px-4 border ${darkMode ? 'border-gray-600 bg-gray-700 hover:bg-gray-600' : 'border-gray-300 bg-white hover:bg-gray-50'} rounded-lg shadow-sm text-sm font-medium ${darkMode ? 'text-white' : 'text-gray-900'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200`}
-            >
-              <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-              </svg>
-              Sign up with Google
-            </motion.button>
+            </button>
           </form>
-
-          {/* Login Link */}
-          <div className="text-center mt-6">
-            <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-              Already have an account?{' '}
-              <Link
-                to="/login"
-                className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
-              >
-                Sign in here!
-              </Link>
-            </p>
-          </div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 };

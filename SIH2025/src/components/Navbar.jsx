@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import ThemeToggle from './ThemeToggle'
 import { useLanguage } from '../context/LanguageContext'
+import { useAuth } from '../context/AuthContext'
 
 // ✅ Language Selector
 function LanguageSelector() {
@@ -55,21 +56,33 @@ function LanguageSelector() {
 }
 
 // ✅ Nav items
-const getNavItems = (translate) => [
-  { to: '/', label: translate('home') },
-  { to: '/live', label: translate('liveTracking') },
-  { to: '/routes', label: translate('routes') },
-  { to: '/green', label: translate('sustainability') },
-  { to: '/profile', label: translate('profile') },
-  { to: '/feedback', label: translate('feedback') },
-  { to: '/accessibility', label: translate('settings') }
-]
+const getNavItems = (translate, user) => {
+  const baseItems = [
+    { to: '/', label: translate('home') },
+    { to: '/live', label: translate('liveTracking') },
+    { to: '/routes', label: translate('routes') },
+    { to: '/green', label: translate('sustainability') },
+    { to: '/profile', label: translate('profile') },
+    { to: '/feedback', label: translate('feedback') },
+    { to: '/accessibility', label: translate('settings') }
+  ]
+  
+  // Add role-specific items
+  if (user && user.role === 'driver') {
+    baseItems.push({ to: '/driver', label: translate('driverDashboard') || 'Driver Dashboard' })
+  } else if (user && user.role === 'admin') {
+    baseItems.push({ to: '/admin', label: translate('adminDashboard') || 'Admin Dashboard' })
+  }
+  
+  return baseItems
+}
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
   const { translate } = useLanguage()
-  const navItems = getNavItems(translate)
+  const { user } = useAuth()
+  const navItems = getNavItems(translate, user)
 
   useEffect(() => {
     setOpen(false)

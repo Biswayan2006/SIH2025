@@ -14,7 +14,9 @@ import SignUp from './pages/SignUp.jsx'
 import AuthSuccess from './pages/AuthSuccess.jsx'
 import Accessibility from './pages/Accessibility.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
+import DriverDashboard from './pages/DriverDashboard.jsx'
 import Profile from './pages/Profile.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 import { GoogleOAuthProvider} from '@react-oauth/google'
 
@@ -33,7 +35,8 @@ const router = createBrowserRouter([
       { path: 'signup', element: <SignUp /> },
       { path: 'auth/success', element: <AuthSuccess /> },
       { path: 'accessibility', element: <Accessibility /> },
-      { path: 'admin', element: <AdminDashboard /> },
+      { path: 'admin', element: <ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute> },
+      { path: 'driver', element: <ProtectedRoute allowedRoles={['driver']}><DriverDashboard /></ProtectedRoute> },
     ],
   },
 ])

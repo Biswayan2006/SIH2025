@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useTheme } from '../context/ThemeContext'
 import { useLanguage } from '../context/LanguageContext'
-import PageFadeIn from '../components/PageFadeIn'
 
 const sampleRoutes = [
   {
@@ -220,18 +219,17 @@ export default function RoutePlanner() {
 
   const { darkMode } = useTheme();
   const { translate } = useLanguage();
+  
   return (
-    <PageFadeIn>
-      <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-blue-50 to-emerald-50'}`}>
-        <div className="container-modern section-spacing">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gradient-to-b from-blue-50 to-emerald-50'}`}>
       <div className="container-modern section-spacing">
         {/* Hero Header */}
         <div className="text-center mb-12 pt-8">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-500 to-emerald-500">
-            {translate('smartRoutePlanner')}
+            Smart Route Planner
           </h1>
           <p className={`${darkMode ? 'text-gray-300' : 'text-gray-600'} max-w-2xl mx-auto text-lg`}>
-            {translate('planYourJourney')}
+            Plan your journey with <span className="text-blue-600 font-medium">AI-powered</span> predictions and <span className="text-emerald-500 font-medium">eco-friendly</span> route options
           </p>
         </div>
 
@@ -240,7 +238,7 @@ export default function RoutePlanner() {
           <div className="relative flex items-center max-w-2xl mx-auto">
             <input
               type="text"
-              placeholder={translate('searchRoutesDestinations')}
+              placeholder="Search routes, destinations, or features..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               ref={searchRef}
@@ -263,14 +261,14 @@ export default function RoutePlanner() {
             onClick={() => setShowSmartSchedule(!showSmartSchedule)}
             className="px-6 py-3 bg-gradient-to-r from-blue-600 to-emerald-500 text-white rounded-full shadow-md hover:shadow-lg transition-all duration-300"
           >
-            {showSmartSchedule ? `🗓️ ${translate('hideSmartSchedule')}` : `🗓️ ${translate('showSmartSchedule')}`}
+            {showSmartSchedule ? '🗓️ Hide Smart Schedule' : '🗓️ Show Smart Schedule'}
           </button>
         </div>
 
         {/* Smart Schedule */}
         {showSmartSchedule && (
           <div className={`mb-12 ${darkMode ? 'bg-gray-800/90 text-white' : 'bg-white/90'} backdrop-blur-sm rounded-2xl shadow-lg p-6 transition-all duration-300`}>
-            <h2 className={`text-2xl font-bold mb-6 text-center ${darkMode ? 'text-white' : 'text-gray-800'}`}>{translate('smartScheduleFor')} {selectedDay}</h2>
+            <h2 className={`text-2xl font-bold mb-6 text-center ${darkMode ? 'text-white' : 'text-gray-800'}`}>Smart Schedule for {selectedDay}</h2>
             
             {/* Day Selector */}
             <div className="flex justify-center gap-2 mb-8 overflow-x-auto pb-2">
@@ -294,7 +292,7 @@ export default function RoutePlanner() {
               {/* Morning */}
               <div className={`${darkMode ? 'bg-blue-900/30 border-blue-800' : 'bg-blue-50 border-blue-100'} rounded-xl p-4 border`}>
                 <h3 className={`font-medium ${darkMode ? 'text-blue-300' : 'text-blue-800'} mb-3 flex items-center gap-2`}>
-                  <span>☀️</span> {translate('morning')} (6AM - 11AM)
+                  <span>☀️</span> Morning (6AM - 11AM)
                 </h3>
                 <div className="space-y-2">
                   {getScheduleForDay(selectedDay).morning.map((route, idx) => (
@@ -311,7 +309,7 @@ export default function RoutePlanner() {
               {/* Afternoon */}
               <div className={`${darkMode ? 'bg-yellow-900/30 border-yellow-800' : 'bg-yellow-50 border-yellow-100'} rounded-xl p-4 border`}>
                 <h3 className={`font-medium ${darkMode ? 'text-yellow-300' : 'text-yellow-800'} mb-3 flex items-center gap-2`}>
-                  <span>🌤️</span> {translate('afternoon')} (11AM - 4PM)
+                  <span>🌤️</span> Afternoon (11AM - 4PM)
                 </h3>
                 <div className="space-y-2">
                   {getScheduleForDay(selectedDay).afternoon.map((route, idx) => (
@@ -328,7 +326,7 @@ export default function RoutePlanner() {
               {/* Evening */}
               <div className={`${darkMode ? 'bg-orange-900/30 border-orange-800' : 'bg-orange-50 border-orange-100'} rounded-xl p-4 border`}>
                 <h3 className={`font-medium ${darkMode ? 'text-orange-300' : 'text-orange-800'} mb-3 flex items-center gap-2`}>
-                  <span>🌆</span> {translate('evening')} (4PM - 8PM)
+                  <span>🌆</span> Evening (4PM - 8PM)
                 </h3>
                 <div className="space-y-2">
                   {getScheduleForDay(selectedDay).evening.map((route, idx) => (
@@ -345,7 +343,7 @@ export default function RoutePlanner() {
               {/* Night */}
               <div className={`${darkMode ? 'bg-indigo-900/30 border-indigo-800' : 'bg-indigo-50 border-indigo-100'} rounded-xl p-4 border`}>
                 <h3 className={`font-medium ${darkMode ? 'text-indigo-300' : 'text-indigo-800'} mb-3 flex items-center gap-2`}>
-                  <span>🌙</span> {translate('night')} (8PM - 6AM)
+                  <span>🌙</span> Night (8PM - 6AM)
                 </h3>
                 <div className="space-y-2">
                   {getScheduleForDay(selectedDay).night && getScheduleForDay(selectedDay).night.map((route, idx) => (
@@ -364,14 +362,14 @@ export default function RoutePlanner() {
 
         {/* Route Planning Form */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-500">{translate('planYourRoute')}</h2>
+          <h2 className="text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-500">Plan Your Route</h2>
           
           <form onSubmit={handlePlanRoute} className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg p-6">
             <div className="grid md:grid-cols-2 gap-6">
               {/* From Input */}
               <div className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {translate('from')}
+                  From
                 </label>
                 <div className="relative">
                   <input
@@ -380,7 +378,7 @@ export default function RoutePlanner() {
                     onChange={(e) => setFromLocation(e.target.value)}
                     onFocus={() => setShowSuggestions({ ...showSuggestions, from: true })}
                     onBlur={() => setTimeout(() => setShowSuggestions({ ...showSuggestions, from: false }), 200)}
-                    placeholder={`   ${translate('enterStartingPoint')}`}
+                    placeholder="   Enter starting point..."
                     className="input-modern pl-12 rounded-full w-full py-3 px-4 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
                   />
                   <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500">
@@ -411,23 +409,23 @@ export default function RoutePlanner() {
               {/* To Input */}
               <div className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {translate('to')}
+                  To
                 </label>
                 <div className="relative">
-<input
-  type="text"
-  value={toLocation}
-  onChange={(e) => setToLocation(e.target.value)}
-  onFocus={() => setShowSuggestions({ ...showSuggestions, to: true })}
-  onBlur={() => setTimeout(() => setShowSuggestions({ ...showSuggestions, to: false }), 200)}
-  placeholder={`   ${translate('enterDestination')}`}
-  className="input-modern pl-12 rounded-full w-full py-3 px-4 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
-/>
-<div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500">
-  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-  </svg>
-</div>
+                  <input
+                    type="text"
+                    value={toLocation}
+                    onChange={(e) => setToLocation(e.target.value)}
+                    onFocus={() => setShowSuggestions({ ...showSuggestions, to: true })}
+                    onBlur={() => setTimeout(() => setShowSuggestions({ ...showSuggestions, to: false }), 200)}
+                    placeholder="   Enter destination..."
+                    className="input-modern pl-12 rounded-full w-full py-3 px-4 border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                  />
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-500">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    </svg>
+                  </div>
                 </div>
 
                 {/* Suggestions */}
@@ -490,7 +488,7 @@ export default function RoutePlanner() {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                   </svg>
-                  {translate('findRoutes')}
+                  Plan My Route
                 </>
               )}
             </button>
@@ -500,7 +498,7 @@ export default function RoutePlanner() {
         {/* Routes Grid */}
         <div className="mb-12">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-emerald-500">{translate('routeDetails')}</h2>
+            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-emerald-500">Available Routes</h2>
             
             <div className="flex flex-wrap gap-2">
               <button 
@@ -618,7 +616,7 @@ export default function RoutePlanner() {
                     {route.features && route.features.map((feature, idx) => (
                       <span 
                         key={idx}
-                        className={`text-xs px-2 py-1 ${darkMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-100'} rounded-full`}
+                        className="text-xs px-2 py-1 bg-gray-100 rounded-full"
                       >
                         {feature}
                       </span>
@@ -636,9 +634,6 @@ export default function RoutePlanner() {
           </div>
         </div>
       </div>
-      </div>
-      </div>
-    </PageFadeIn>
-
-  );
-};
+    </div>
+  )
+}
